@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap');
+@import "tailwindcss";
 
 @theme {
   --color-prometheus-dark: #0d0d0d;
@@ -74,4 +74,231 @@ textarea:focus {
 ::selection {
   background-color: rgba(217, 119, 6, 0.3);
   color: #ffffff;
+}
+
+/* ============================================
+   ANIMATIONS - Prometheus 2.0
+   Based on reference HTML patterns
+   ============================================ */
+
+/* Fade In - Simple opacity transition */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Fade In Up - Opacity with upward movement */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Scale - Opacity with scale */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Slide In Right - Opacity with rightward movement */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Pulse Glow - Amber glow pulsation */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(212, 115, 12, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(212, 115, 12, 0.4);
+  }
+}
+
+/* Breathe - Subtle scale breathing effect */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Rotate 360 - Full rotation */
+@keyframes rotate360 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Animation utility classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.fade-in-scale {
+  animation: fadeInScale 0.4s ease-out forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* Staggered animation delays */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+
+/* ============================================
+   NAVWHEEL SPECIFIC STYLES
+   ============================================ */
+
+/* NavWheel backdrop overlay */
+.navwheel-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(8, 8, 8, 0.85);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+  z-index: 999;
+}
+
+/* NavWheel smooth transitions */
+.navwheel-container {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navwheel-node {
+  transition: all 0.3s ease;
+}
+
+.navwheel-node:hover {
+  transform: scale(1.1);
+}
+
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
+/* Primary amber button */
+.btn-primary {
+  background: linear-gradient(180deg, #d4730c 0%, #8B4513 100%);
+  color: #080808;
+  border: 1px solid #d4730c;
+  padding: 12px 28px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #e8a33a 0%, #d4730c 100%);
+  box-shadow: 0 0 25px rgba(212, 115, 12, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Outline button */
+.btn-outline {
+  background: transparent;
+  border: 1px solid #2d2d2d;
+  color: #a0a0a0;
+  padding: 12px 28px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  border-color: #d4730c;
+  color: #d4730c;
+  background: rgba(212, 115, 12, 0.05);
+}
+
+/* ============================================
+   SLIDER STYLES
+   ============================================ */
+
+/* Custom range slider track */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: linear-gradient(to right, #767171, #d4730c);
+  border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #d4730c;
+  border: 2px solid #0d0d0d;
+  border-radius: 50%;
+  margin-top: -6px;
+  box-shadow: 0 0 8px rgba(212, 115, 12, 0.5);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  background: linear-gradient(to right, #767171, #d4730c);
+  border-radius: 2px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #d4730c;
+  border: 2px solid #0d0d0d;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(212, 115, 12, 0.5);
 }

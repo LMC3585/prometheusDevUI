@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prometheus Course Generation System V3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-base: #080808;
+            --bg-dark: #0d0d0d;
+            --bg-medium: #121212;
+            --bg-light: #181818;
+            --bg-lighter: #1e1e1e;
+            --bg-card: #141414;
+            --bg-input: #0a0a0a;
+            
+            --amber-darkest: #5a3000;
+            --amber-dark: #8B4513;
+            --amber: #d4730c;
+            --amber-light: #e8a33a;
+            --amber-glow: #ff9500;
+            
+            --green: #2e7d32;
+            --green-light: #4CAF50;
+            --green-dim: rgba(46, 125, 50, 0.12);
+            
+            --red: #b71c1c;
+            --red-light: #c0392b;
+            
+            --cyan: #006064;
+            --cyan-light: #00838f;
+            
+            --gray-darkest: #1a1a1a;
+            --gray-dark: #2a2a2a;
+            --gray: #666666;
+            --gray-light: #888888;
+            
+            --white: #f0f0f0;
+            --text-primary: #d8d8d8;
+            --text-secondary: #a0a0a0;
+            --text-dim: #555555;
+            --text-muted: #404040;
+            
+            --border: #1f1f1f;
+            --border-light: #2d2d2d;
+            --border-amber: rgba(212, 115, 12, 0.25);
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .mono { font-family: 'Share Tech Mono', monospace; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--amber-dark); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 115, 12, 0.2); }
+            50% { box-shadow: 0 0 35px rgba(212, 115, 12, 0.4); }
+        }
+        
+        @keyframes rotate360 {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        .fade-in-scale { animation: fadeInScale 0.4s ease-out forwards; }
+        .slide-in-right { animation: slideInRight 0.5s ease-out forwards; }
+        .pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+        
+        /* Form Elements */
+        input, select, textarea {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            font-size: 11px;
+            border-radius: 3px;
+            outline: none;
+            transition: all 0.3s ease;
+            width: 100%;
+            letter-spacing: 0.5px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--amber);
+            box-shadow: 0 0 0 1px var(--amber-darkest), 0 0 25px rgba(212, 115, 12, 0.08);
+        }
+        
+        input::placeholder, textarea::placeholder { 
+            color: var(--text-muted); 
+            letter-spacing: 1px;
+        }
+        
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23d4730c' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        
+        /* Button Base */
+        button {
+            font-family: 'Rajdhani', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(180deg, var(--amber) 0%, var(--amber-dark) 100%);
+            color: var(--bg-base);
+            border: 1px solid var(--amber);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(180deg, var(--amber-light) 0%, var(--amber) 100%);
+            box-shadow: 0 0 25px rgba(212, 115, 12, 0.35);
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+            background: rgba(212, 115, 12, 0.05);
+        }
+        
+        .btn-success {
+            background: transparent;
+            border: 1px solid var(--green);
+            color: var(--green-light);
+        }
+        
+        .btn-success:hover {
+            background: var(--green-dim);
+            box-shadow: 0 0 15px rgba(46, 125, 50, 0.2);
+        }
+        
+        .btn-danger {
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red-light);
+        }
+        
+        .btn-danger:hover {
+            background: rgba(183, 28, 28, 0.1);
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+        
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: var(--border-light);
+        }
+        
+        .card-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-title {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        /* Status */
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        .status-active { 
+            background: var(--green-light); 
+            box-shadow: 0 0 10px var(--green); 
+        }
+        .status-idle { background: var(--gray); }
+        .status-warning { 
+            background: var(--amber); 
+            box-shadow: 0 0 10px var(--amber-dark); 
+        }
+        
+        /* Section Transitions */
+        .section-container {
+            opacity: 1;
+            transform: none;
+        }
+        
+        .section-container.active {
+            opacity: 1;
+            transform: none;
+        }
+        
+        .section-container.exiting {
+            opacity: 1;
+            transform: none;
+        }
+        
+        /* Staggered animations */
+        .stagger-1 { animation-delay: 0.05s; }
+        .stagger-2 { animation-delay: 0.1s; }
+        .stagger-3 { animation-delay: 0.15s; }
+        .stagger-4 { animation-delay: 0.2s; }
+        .stagger-5 { animation-delay: 0.25s; }
+        .stagger-6 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useRef } = React;
+
+        // ===================== ICONS =====================
+        const Icons = {
+            dashboard: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>,
+            config: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>,
+            scalar: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="12" y="6" width="3" height="12"/><rect x="17" y="13" width="3" height="5"/></svg>,
+            lessons: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg>,
+            brand: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+            agents: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2a10 10 0 0 1 10 10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg>,
+            analytics: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>,
+            generate: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+            plus: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+            trash: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
+            check: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>,
+            upload: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+            chevronDown: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>,
+            play: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+            pause: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        };
+
+        // ===================== PROMETHEUS FLAME LOGO =====================
+        const PrometheusFlame = ({ size = 60, glowing = false, animated = false }) => (
+            <svg width={size} height={size} viewBox="0 0 100 100" style={{ 
+                filter: glowing ? 'drop-shadow(0 0 15px rgba(212, 115, 12, 0.6))' : 'none',
+                animation: animated ? 'breathe 3s ease-in-out infinite' : 'none'
+            }}>
+                <defs>
+                    <linearGradient id="outerFlame" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stopColor="#5a3000" />
+                        <stop offset="40%" stopColor="#8B4513" />
+                        <stop offset="70%" stopColor="#d4730c" />
+                        <stop offset="100%" stopColor="#e8a33a" />
+                    </linearGradient>
+                    <linearGradient id="innerFlame" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stopColor="#d4730c" />
+                        <stop offset="100%" stopColor="#ff9500" />
+                    </linearGradient>
+                    <linearGradient id="coreFlame" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stopColor="#e8a33a" />
+                        <stop offset="100%" stopColor="#fff5e6" />
+                    </linearGradient>
+                    <filter id="flameGlow">
+                        <feGaussianBlur stdDeviation="2" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+                
+                {/* Background circle */}
+                <circle cx="50" cy="50" r="46" fill="none" stroke="url(#outerFlame)" strokeWidth="0.5" opacity="0.3"/>
+                <circle cx="50" cy="50" r="40" fill="#0a0a0a" />
+                
+                {/* Flame */}
+                <g filter="url(#flameGlow)">
+                    {/* Outer flame */}
+                    <path d="M50 12 C60 32, 75 40, 75 56 C75 76, 62 88, 50 88 C38 88, 25 76, 25 56 C25 40, 40 32, 50 12 Z" 
+                          fill="url(#outerFlame)" />
+                    {/* Middle flame */}
+                    <path d="M50 24 C56 38, 65 45, 65 56 C65 70, 56 78, 50 78 C44 78, 35 70, 35 56 C35 45, 44 38, 50 24 Z" 
+                          fill="url(#innerFlame)" />
+                    {/* Inner core */}
+                    <path d="M50 36 C53 46, 56 50, 56 56 C56 64, 52 68, 50 68 C48 68, 44 64, 44 56 C44 50, 47 46, 50 36 Z" 
+                          fill="url(#coreFlame)" />
+                </g>
+                
+                {/* Highlight */}
+                <ellipse cx="50" cy="58" rx="3" ry="8" fill="rgba(255,255,255,0.5)" />
+            </svg>
+        );
+
+        // ===================== NAVIGATION COMPASS =====================
+        const NavigationCompass = ({ currentSection, onNavigate, sections, isExpanded, onToggle }) => {
+            const [hoveredSection, setHoveredSection] = useState(null);
+            const [rotation, setRotation] = useState(0);
+            
+            const sectionAngles = {
+                dashboard: 0, config: 45, scalar: 90, lessons: 135,
+                brand: 180, agents: 225, analytics: 270, generate: 315
+            };
+            
+            useEffect(() => {
+                const targetAngle = sectionAngles[currentSection] || 0;
+                setRotation(-targetAngle);
+            }, [currentSection]);
+            
+            const compassSize = isExpanded ? 280 : 70;
+            const nodeSize = isExpanded ? 40 : 0;
+            const radius = isExpanded ? 100 : 0;
+            
+            return (
+                <div style={{
+                    position: 'fixed',
+                    bottom: '30px',
+                    left: '30px',
+                    zIndex: 1000,
+                    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}>
+                    {/* Expanded Overlay */}
+                    {isExpanded && (
+                        <div 
+                            onClick={onToggle}
+                            style={{
+                                position: 'fixed',
+                                top: 0, left: 0, right: 0, bottom: 0,
+                                background: 'rgba(8, 8, 8, 0.85)',
+                                backdropFilter: 'blur(4px)',
+                                animation: 'fadeIn 0.3s ease-out'
+                            }}
+                        />
+                    )}
+                    
+                    <div style={{
+                        position: 'relative',
+                        width: `${compassSize}px`,
+                        height: `${compassSize}px`,
+                        transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}>
+                        {/* Outer Ring SVG */}
+                        <svg 
+                            width={compassSize} 
+                            height={compassSize} 
+                            style={{ 
+                                position: 'absolute', 
+                                top: 0, 
+                                left: 0,
+                                transition: 'all 0.5s ease'
+                            }}
+                        >
+                            <defs>
+                                <linearGradient id="compassRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="#5a3000" />
+                                    <stop offset="50%" stopColor="#8B4513" />
+                                    <stop offset="100%" stopColor="#5a3000" />
+                                </linearGradient>
+                            </defs>
+                            {/* Outer decorative ring */}
+                            <circle 
+                                cx={compassSize/2} 
+                                cy={compassSize/2} 
+                                r={compassSize/2 - 2} 
+                                fill="none" 
+                                stroke="url(#compassRingGrad)" 
+                                strokeWidth="1.5" 
+                                opacity="0.6"
+                            />
+                            {isExpanded && (
+                                <>
+                                    {/* Inner track circle */}
+                                    <circle 
+                                        cx={compassSize/2} 
+                                        cy={compassSize/2} 
+                                        r={radius} 
+                                        fill="none" 
+                                        stroke="var(--border)" 
+                                        strokeWidth="1"
+                                        strokeDasharray="4 4"
+                                    />
+                                    {/* Tick marks */}
+                                    {[...Array(8)].map((_, i) => {
+                                        const angle = (i * 45) * (Math.PI / 180);
+                                        const innerR = compassSize/2 - 12;
+                                        const outerR = compassSize/2 - 4;
+                                        return (
+                                            <line 
+                                                key={i}
+                                                x1={compassSize/2 + innerR * Math.sin(angle)}
+                                                y1={compassSize/2 - innerR * Math.cos(angle)}
+                                                x2={compassSize/2 + outerR * Math.sin(angle)}
+                                                y2={compassSize/2 - outerR * Math.cos(angle)}
+                                                stroke="#5a3000"
+                                                strokeWidth="2"
+                                            />
+                                        );
+                                    })}
+                                </>
+                            )}
+                        </svg>
+                        
+                        {/* Rotating Nodes Container (only when expanded) */}
+                        {isExpanded && (
+                            <div style={{
+                                position: 'absolute',
+                                top: 0, left: 0,
+                                width: '100%', height: '100%',
+                                transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transform: `rotate(${rotation}deg)`
+                            }}>
+                                {sections.map((section, index) => {
+                                    const angle = (index * 45) * (Math.PI / 180);
+                                    const x = compassSize / 2 + radius * Math.sin(angle);
+                                    const y = compassSize / 2 - radius * Math.cos(angle);
+                                    const isActive = currentSection === section.id;
+                                    const isHovered = hoveredSection === section.id;
+                                    
+                                    return (
+                                        <div
+                                            key={section.id}
+                                            onClick={(e) => { e.stopPropagation(); onNavigate(section.id); }}
+                                            onMouseEnter={() => setHoveredSection(section.id)}
+                                            onMouseLeave={() => setHoveredSection(null)}
+                                            style={{
+                                                position: 'absolute',
+                                                left: `${x}px`,
+                                                top: `${y}px`,
+                                                transform: `translate(-50%, -50%) rotate(${-rotation}deg)`,
+                                                width: `${nodeSize}px`,
+                                                height: `${nodeSize}px`,
+                                                borderRadius: '50%',
+                                                background: isActive ? 'var(--amber-dark)' : 'var(--bg-medium)',
+                                                border: `2px solid ${isActive ? 'var(--amber)' : isHovered ? 'var(--amber-dark)' : 'var(--border)'}`,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                color: isActive ? 'var(--white)' : isHovered ? 'var(--amber)' : 'var(--text-dim)',
+                                                boxShadow: isActive ? '0 0 20px rgba(212, 115, 12, 0.5)' : 'none'
+                                            }}
+                                        >
+                                            {section.icon}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                        
+                        {/* Center Hub */}
+                        <div 
+                            onClick={onToggle}
+                            style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: isExpanded ? '70px' : '60px',
+                                height: isExpanded ? '70px' : '60px',
+                                borderRadius: '50%',
+                                background: 'var(--bg-dark)',
+                                border: `2px solid ${isExpanded ? 'var(--amber)' : 'var(--amber-dark)'}`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.4s ease',
+                                zIndex: 10
+                            }}
+                        >
+                            <PrometheusFlame size={isExpanded ? 50 : 42} glowing={isExpanded} />
+                        </div>
+                        
+                        {/* Section Label (when expanded) */}
+                        {isExpanded && (
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '-50px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                textAlign: 'center',
+                                animation: 'fadeIn 0.4s ease-out'
+                            }}>
+                                <div className="mono" style={{ 
+                                    fontSize: '11px', 
+                                    letterSpacing: '4px', 
+                                    color: 'var(--amber)',
+                                    marginBottom: '4px'
+                                }}>
+                                    {hoveredSection 
+                                        ? sections.find(s => s.id === hoveredSection)?.label 
+                                        : sections.find(s => s.id === currentSection)?.label
+                                    }
+                                </div>
+                                <div className="mono" style={{ fontSize: '8px', letterSpacing: '2px', color: 'var(--text-dim)' }}>
+                                    {hoveredSection ? 'CLICK TO SELECT' : 'CURRENT SECTION'}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Mini label when collapsed */}
+                    {!isExpanded && (
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '-25px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            whiteSpace: 'nowrap'
+                        }}>
+                            <div className="mono" style={{ fontSize: '8px', letterSpacing: '2px', color: 'var(--text-dim)' }}>
+                                NAVIGATE
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // ===================== HEADER =====================
+        const Header = ({ courseData, currentTime, currentSection, sections }) => (
+            <header style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '18px 40px',
+                borderBottom: '1px solid var(--border)',
+                background: 'var(--bg-dark)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+                    <div>
+                        <h1 style={{ 
+                            fontSize: '14px', 
+                            fontWeight: 400, 
+                            letterSpacing: '8px', 
+                            color: 'var(--text-primary)', 
+                            marginBottom: '2px' 
+                        }}>
+                            PROMETHEUS
+                        </h1>
+                        <div style={{ fontSize: '9px', letterSpacing: '3px', color: 'var(--text-dim)' }}>
+                            COURSE GENERATION SYSTEM
+                        </div>
+                    </div>
+                    
+                    <div style={{ 
+                        height: '35px', 
+                        width: '1px', 
+                        background: 'var(--border)' 
+                    }} />
+                    
+                    <div className="mono" style={{ 
+                        fontSize: '10px', 
+                        letterSpacing: '3px', 
+                        color: 'var(--amber)',
+                        padding: '8px 16px',
+                        background: 'rgba(212, 115, 12, 0.08)',
+                        border: '1px solid var(--border-amber)',
+                        borderRadius: '3px'
+                    }}>
+                        {sections.find(s => s.id === currentSection)?.label || 'DASHBOARD'}
+                    </div>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'auto auto', 
+                        gap: '4px 20px', 
+                        fontSize: '10px' 
+                    }}>
+                        <span className="mono" style={{ color: 'var(--text-dim)', letterSpacing: '1px' }}>COURSE</span>
+                        <span className="mono" style={{ color: courseData.title ? 'var(--green-light)' : 'var(--text-muted)' }}>
+                            {courseData.title || '—'}
+                        </span>
+                        <span className="mono" style={{ color: 'var(--text-dim)', letterSpacing: '1px' }}>LEVEL</span>
+                        <span className="mono" style={{ color: courseData.level ? 'var(--green-light)' : 'var(--text-muted)' }}>
+                            {courseData.level || '—'}
+                        </span>
+                    </div>
+                    
+                    <div className="mono" style={{ textAlign: 'right', fontSize: '10px' }}>
+                        <div style={{ color: 'var(--text-secondary)', letterSpacing: '1px', marginBottom: '2px' }}>
+                            {currentTime.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                        </div>
+                        <div style={{ color: 'var(--amber)', letterSpacing: '2px', fontSize: '12px' }}>
+                            {currentTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                        </div>
+                    </div>
+                </div>
+            </header>
+        );
+
+        // ===================== STATUS BAR =====================
+        const StatusBar = ({ owner, status, progress }) => (
+            <div style={{
+                position: 'fixed',
+                bottom: 0,
+                left: 120,
+                right: 0,
+                background: 'var(--bg-dark)',
+                borderTop: '1px solid var(--border)',
+                padding: '12px 40px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: '9px',
+                zIndex: 50
+            }}>
+                <div style={{ display: 'flex', gap: '35px' }}>
+                    <span className="mono">
+                        <span style={{ color: 'var(--text-dim)', letterSpacing: '2px' }}>OWNER</span>
+                        <span style={{ color: 'var(--text-secondary)', marginLeft: '12px' }}>{owner}</span>
+                    </span>
+                    <span className="mono">
+                        <span style={{ color: 'var(--text-dim)', letterSpacing: '2px' }}>STATUS</span>
+                        <span style={{ color: 'var(--green-light)', marginLeft: '12px' }}>{status}</span>
+                    </span>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <span className="mono" style={{ color: 'var(--text-dim)', letterSpacing: '2px' }}>PROGRESS</span>
+                    <div style={{ 
+                        width: '140px', 
+                        height: '4px', 
+                        background: 'var(--bg-lighter)', 
+                        borderRadius: '2px', 
+                        overflow: 'hidden' 
+                    }}>
+                        <div style={{
+                            width: `${progress}%`,
+                            height: '100%',
+                            background: 'linear-gradient(90deg, var(--green), var(--amber))',
+                            borderRadius: '2px',
+                            transition: 'width 0.6s ease'
+                        }} />
+                    </div>
+                    <span className="mono" style={{ color: 'var(--amber)', width: '35px' }}>{progress}%</span>
+                </div>
+                
+                <div className="mono" style={{ color: 'var(--text-muted)', letterSpacing: '1px' }}>
+                    CTRL+SPACE: NAVIGATE
+                </div>
+            </div>
+        );
+
+        // ===================== DEFAULT DATA =====================
+        const defaultCourseData = {
+            title: '',
+            level: '',
+            thematic: '',
+            duration: '',
+            code: '',
+            developer: '',
+            description: '',
+            learningObjectives: [''],
+            modules: [
+                {
+                    id: 1,
+                    name: 'Module 1',
+                    lessons: [
+                        { id: 1, name: 'Introduction', topics: [
+                            { id: 1, name: 'Overview', subtopics: [
+                                { id: 1, name: 'Fundamentals', content: '' },
+                                { id: 2, name: 'Key Concepts', content: '' },
+                                { id: 3, name: 'Framework', content: '' }
+                            ]},
+                            { id: 2, name: 'Context', subtopics: [] }
+                        ]},
+                        { id: 2, name: 'Core Principles', topics: [] },
+                        { id: 3, name: 'Application Methods', topics: [] }
+                    ],
+                    performanceCriteria: ['Demonstrate understanding of core concepts', 'Apply principles in scenario-based exercises']
+                }
+            ],
+            generationSettings: { contentDepth: 50, assessmentRigor: 50, resourceDensity: 50 },
+            supplementaryOptions: { awareness: false, seniorAudience: false, online: false, certification: false, accredited: false },
+            branding: { logo: null, primaryColor: '#d4730c', secondaryColor: '#4CAF50', template: 'prometheus' },
+            pkeAgents: [
+                { id: 'bibliophylax', name: 'BIBLIOPHYLAX', role: 'Research & Reference Validation', status: 'idle', progress: 0, color: '#00838f', icon: '📚' },
+                { id: 'socratic', name: 'SOCRATIC', role: 'Question & Assessment Generation', status: 'active', progress: 67, color: '#d4730c', icon: '❓' },
+                { id: 'arbitrator', name: 'ARBITRATOR', role: 'Quality Assurance & Compliance', status: 'idle', progress: 0, color: '#ff9800', icon: '⚖️' },
+                { id: 'athena', name: 'ATHENA', role: 'Content Synthesis & Structure', status: 'active', progress: 42, color: '#4CAF50', icon: '🦉' }
+            ],
+            analytics: {
+                coursesGenerated: 47,
+                totalLessons: 312,
+                avgGenTime: 4.2,
+                objectivesValidated: 1248,
+                weeklyActivity: [65, 78, 52, 91, 84, 67, 73],
+                outputDistribution: { pptx: 42, docx: 68, pdf: 46 },
+                bloomsDistribution: { remember: 15, understand: 22, apply: 28, analyze: 18, evaluate: 10, create: 7 }
+            },
+            outputs: {
+                strategic: ['Course Specification', 'Programme Map', 'Assessment Strategy'],
+                instructor: ['Lesson Plans', 'Instructor Handbook', 'Timetables', 'Marking Rubrics'],
+                learner: ['Presentations', 'Workbooks', 'Reading Lists', 'Exercise Sets']
+            }
+        };
+
+        const sampleCourses = [
+            { id: 'int001', name: 'Intelligence Analysis Fundamentals', level: 'Foundation', thematic: 'Intelligence', duration: '5 Days', code: 'INT-001' },
+            { id: 'sec002', name: 'Strategic Security Management', level: 'Advanced', thematic: 'Security', duration: '10 Days', code: 'SEC-002' },
+            { id: 'lead003', name: 'Leadership in Crisis Situations', level: 'Intermediate', thematic: 'Leadership', duration: '3 Days', code: 'LEAD-003' },
+            { id: 'cyber004', name: 'Cyber Threat Intelligence', level: 'Advanced', thematic: 'Cyber', duration: '5 Days', code: 'CYBER-004' }
+        ];
+
+        // ===================== MAIN APPLICATION =====================
+        const App = () => {
+            const [authenticated, setAuthenticated] = useState(false);
+            const [currentSection, setCurrentSection] = useState('dashboard');
+            const [sectionVisible, setSectionVisible] = useState(true);
+            const [courseData, setCourseData] = useState(defaultCourseData);
+            const [currentTime, setCurrentTime] = useState(new Date());
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [loginError, setLoginError] = useState('');
+            const [compassExpanded, setCompassExpanded] = useState(false);
+            const [selectedModule, setSelectedModule] = useState(1);
+            const [buildView, setBuildView] = useState('lessons');
+            const [selectedOutputs, setSelectedOutputs] = useState([]);
+
+            const sections = [
+                { id: 'dashboard', label: 'DASHBOARD', icon: Icons.dashboard },
+                { id: 'config', label: 'CONFIGURATION', icon: Icons.config },
+                { id: 'scalar', label: 'CONTENT SCALAR', icon: Icons.scalar },
+                { id: 'lessons', label: 'LESSONS', icon: Icons.lessons },
+                { id: 'brand', label: 'BRAND MAPPING', icon: Icons.brand },
+                { id: 'agents', label: 'PKE AGENTS', icon: Icons.agents },
+                { id: 'analytics', label: 'ANALYTICS', icon: Icons.analytics },
+                { id: 'generate', label: 'GENERATE', icon: Icons.generate }
+            ];
+
+            // Clock
+            useEffect(() => {
+                const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            // Keyboard shortcut
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (e.ctrlKey && e.code === 'Space') {
+                        e.preventDefault();
+                        setCompassExpanded(prev => !prev);
+                    }
+                    if (e.code === 'Escape' && compassExpanded) {
+                        setCompassExpanded(false);
+                    }
+                };
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, [compassExpanded]);
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                if (username.toLowerCase() === 'prometheus' && password === 'fire') {
+                    setAuthenticated(true);
+                    setLoginError('');
+                } else {
+                    setLoginError('INVALID CREDENTIALS');
+                }
+            };
+
+            const handleNavigate = useCallback((sectionId) => {
+                if (sectionId === currentSection) {
+                    setCompassExpanded(false);
+                    return;
+                }
+                
+                setSectionVisible(false);
+                setTimeout(() => {
+                    setCurrentSection(sectionId);
+                    setCompassExpanded(false);
+                    setTimeout(() => setSectionVisible(true), 50);
+                }, 300);
+            }, [currentSection]);
+
+            const updateCourseField = (field, value) => {
+                setCourseData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const loadCourse = (courseId) => {
+                const course = sampleCourses.find(c => c.id === courseId);
+                if (course) {
+                    setCourseData(prev => ({
+                        ...prev,
+                        title: course.name,
+                        level: course.level,
+                        thematic: course.thematic,
+                        duration: course.duration,
+                        code: course.code
+                    }));
+                }
+            };
+
+            const addLearningObjective = () => {
+                setCourseData(prev => ({
+                    ...prev,
+                    learningObjectives: [...prev.learningObjectives, '']
+                }));
+            };
+
+            const updateLearningObjective = (index, value) => {
+                setCourseData(prev => {
+                    const newLOs = [...prev.learningObjectives];
+                    newLOs[index] = value;
+                    return { ...prev, learningObjectives: newLOs };
+                });
+            };
+
+            const removeLearningObjective = (index) => {
+                if (courseData.learningObjectives.length > 1) {
+                    setCourseData(prev => ({
+                        ...prev,
+                        learningObjectives: prev.learningObjectives.filter((_, i) => i !== index)
+                    }));
+                }
+            };
+
+            const toggleOutput = (output) => {
+                setSelectedOutputs(prev => 
+                    prev.includes(output) 
+                        ? prev.filter(o => o !== output)
+                        : [...prev, output]
+                );
+            };
+
+            // =================== LOGIN SCREEN ===================
+            if (!authenticated) {
+                return (
+                    <div style={{
+                        minHeight: '100vh',
+                        background: 'linear-gradient(180deg, #050505 0%, #0a0a0a 50%, #080808 100%)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '40px'
+                    }}>
+                        <div style={{ 
+                            textAlign: 'center', 
+                            maxWidth: '380px', 
+                            width: '100%' 
+                        }}>
+                            {/* Logo */}
+                            <div style={{ marginBottom: '60px' }}>
+                                <PrometheusFlame size={100} glowing />
+                            </div>
+                            
+                            {/* Title */}
+                            <h1 style={{ 
+                                fontSize: '18px', 
+                                fontWeight: 300, 
+                                letterSpacing: '12px', 
+                                color: 'var(--text-primary)', 
+                                marginBottom: '8px' 
+                            }}>
+                                PROMETHEUS
+                            </h1>
+                            <div style={{ 
+                                fontSize: '9px', 
+                                letterSpacing: '5px', 
+                                color: 'var(--text-dim)',
+                                marginBottom: '70px'
+                            }}>
+                                COURSE GENERATION SYSTEM
+                            </div>
+                            
+                            {/* Divider */}
+                            <div style={{ 
+                                width: '100%', 
+                                height: '1px', 
+                                background: 'linear-gradient(90deg, transparent, var(--amber-dark), transparent)', 
+                                marginBottom: '70px' 
+                            }} />
+                            
+                            {/* Form */}
+                            <form onSubmit={handleLogin}>
+                                <div style={{ marginBottom: '24px' }}>
+                                    <input
+                                        type="text"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        placeholder="IDENTIFIER"
+                                        style={{ 
+                                            textAlign: 'center', 
+                                            background: 'transparent', 
+                                            letterSpacing: '4px',
+                                            padding: '16px 20px'
+                                        }}
+                                    />
+                                </div>
+                                
+                                <div style={{ marginBottom: '40px' }}>
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="PASSKEY"
+                                        style={{ 
+                                            textAlign: 'center', 
+                                            background: 'transparent', 
+                                            letterSpacing: '4px',
+                                            padding: '16px 20px'
+                                        }}
+                                    />
+                                </div>
+                                
+                                {loginError && (
+                                    <div style={{ 
+                                        color: 'var(--red-light)', 
+                                        fontSize: '10px', 
+                                        letterSpacing: '3px', 
+                                        marginBottom: '30px' 
+                                    }}>
+                                        {loginError}
+                                    </div>
+                                )}
+                                
+                                <button 
+                                    type="submit" 
+                                    className="btn btn-primary" 
+                                    style={{ width: '100%', padding: '18px' }}
+                                >
+                                    AUTHENTICATE
+                                </button>
+                            </form>
+                            
+                            {/* Credentials hint */}
+                            <div style={{ marginTop: '100px' }}>
+                                <div className="mono" style={{ 
+                                    fontSize: '8px', 
+                                    color: 'var(--text-muted)', 
+                                    letterSpacing: '3px' 
+                                }}>
+                                    prometheus / fire
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // =================== DASHBOARD VIEW ===================
+            const DashboardView = () => (
+                <div className={`section-container ${sectionVisible ? 'active' : 'exiting'}`}>
+                    {/* Metrics Row */}
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(4, 1fr)', 
+                        gap: '20px', 
+                        marginBottom: '25px' 
+                    }}>
+                        {[
+                            { label: 'COURSES GENERATED', value: courseData.analytics.coursesGenerated, change: '+12%', positive: true, color: 'var(--amber)' },
+                            { label: 'TOTAL LESSONS', value: courseData.analytics.totalLessons, change: '+8%', positive: true, color: 'var(--green-light)' },
+                            { label: 'AVG GENERATION TIME', value: `${courseData.analytics.avgGenTime}m`, change: '-15%', positive: true, color: 'var(--cyan-light)' },
+                            { label: 'OBJECTIVES VALIDATED', value: courseData.analytics.objectivesValidated.toLocaleString(), change: '+24%', positive: true, color: 'var(--amber-light)' }
+                        ].map((metric, idx) => (
+                            <div 
+                                key={idx} 
+                                className="card"
+                                style={{ padding: '24px' }}
+                            >
+                                <div className="mono" style={{ 
+                                    fontSize: '8px', 
+                                    letterSpacing: '2px', 
+                                    color: 'var(--text-dim)', 
+                                    marginBottom: '16px' 
+                                }}>
+                                    {metric.label}
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+                                    <span className="mono" style={{ 
+                                        fontSize: '30px', 
+                                        fontWeight: 600, 
+                                        color: metric.color 
+                                    }}>
+                                        {metric.value}
+                                    </span>
+                                    <span className="mono" style={{ 
+                                        fontSize: '10px', 
+                                        color: metric.positive ? 'var(--green-light)' : 'var(--red-light)' 
+                                    }}>
+                                        {metric.change}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    {/* Charts Row */}
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: '2fr 1fr', 
+                        gap: '20px', 
+                        marginBottom: '25px' 
+                    }}>
+                        {/* Weekly Activity */}
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">WEEKLY ACTIVITY</span>
+                                <span className="mono" style={{ fontSize: '9px', color: 'var(--text-dim)' }}>LAST 7 DAYS</span>
+                            </div>
+                            <div className="card-body">
+                                <div style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'flex-end', 
+                                    justifyContent: 'space-between', 
+                                    height: '160px', 
+                                    gap: '15px' 
+                                }}>
+                                    {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day, idx) => (
+                                        <div key={idx} style={{ 
+                                            flex: 1, 
+                                            display: 'flex', 
+                                            flexDirection: 'column', 
+                                            alignItems: 'center', 
+                                            gap: '12px' 
+                                        }}>
+                                            <div style={{
+                                                width: '100%',
+                                                height: `${courseData.analytics.weeklyActivity[idx]}%`,
+                                                background: 'linear-gradient(180deg, var(--amber) 0%, var(--amber-dark) 100%)',
+                                                borderRadius: '3px 3px 0 0',
+                                                minHeight: '10px',
+                                                transition: 'height 0.8s ease-out',
+                                                transitionDelay: `${idx * 0.08}s`
+                                            }} />
+                                            <span className="mono" style={{ 
+                                                fontSize: '8px', 
+                                                color: 'var(--text-dim)', 
+                                                letterSpacing: '1px' 
+                                            }}>
+                                                {day}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Output Distribution */}
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">OUTPUT DISTRIBUTION</span>
+                            </div>
+                            <div className="card-body">
+                                {[
+                                    { type: 'PPTX', count: courseData.analytics.outputDistribution.pptx, max: 70, color: 'var(--amber)' },
+                                    { type: 'DOCX', count: courseData.analytics.outputDistribution.docx, max: 70, color: 'var(--green-light)' },
+                                    { type: 'PDF', count: courseData.analytics.outputDistribution.pdf, max: 70, color: 'var(--red-light)' }
+                                ].map((item, idx) => (
+                                    <div key={idx} style={{ marginBottom: idx < 2 ? '24px' : 0 }}>
+                                        <div style={{ 
+                                            display: 'flex', 
+                                            justifyContent: 'space-between', 
+                                            marginBottom: '10px' 
+                                        }}>
+                                            <span className="mono" style={{ 
+                                                fontSize: '10px', 
+                                                color: 'var(--text-secondary)',
+                                                letterSpacing: '1px'
+                                            }}>
+                                                {item.type}
+                                            </span>
+                                            <span className="mono" style={{ 
+                                                fontSize: '10px', 
+                                                color: item.color 
+                                            }}>
+                                                {item.count}
+                                            </span>
+                                        </div>
+                                        <div style={{ 
+                                            height: '6px', 
+                                            background: 'var(--bg-dark)', 
+                                            borderRadius: '3px', 
+                                            overflow: 'hidden' 
+                                        }}>
+                                            <div style={{ 
+                                                width: `${(item.count / item.max) * 100}%`, 
+                                                height: '100%', 
+                                                background: item.color, 
+                                                borderRadius: '3px',
+                                                transition: 'width 0.8s ease-out'
+                                            }} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Bottom Row */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        {/* Bloom's Taxonomy */}
+                        <div className="card" style={{ animationDelay: '0.35s' }}>
+                            <div className="card-header">
+                                <span className="card-title">BLOOM'S TAXONOMY DISTRIBUTION</span>
+                            </div>
+                            <div className="card-body">
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(3, 1fr)', 
+                                    gap: '12px' 
+                                }}>
+                                    {Object.entries(courseData.analytics.bloomsDistribution).map(([level, pct]) => (
+                                        <div key={level} style={{ 
+                                            textAlign: 'center', 
+                                            padding: '18px 12px', 
+                                            background: 'var(--bg-dark)', 
+                                            borderRadius: '4px',
+                                            border: '1px solid var(--border)'
+                                        }}>
+                                            <div className="mono" style={{ 
+                                                fontSize: '20px', 
+                                                color: 'var(--amber)', 
+                                                marginBottom: '8px' 
+                                            }}>
+                                                {pct}%
+                                            </div>
+                                            <div className="mono" style={{ 
+                                                fontSize: '8px', 
+                                                letterSpacing: '1px', 
+                                                color: 'var(--text-dim)', 
+                                                textTransform: 'uppercase' 
+                                            }}>
+                                                {level}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* PKE Agents Status */}
+                        <div className="card" style={{ animationDelay: '0.4s' }}>
+                            <div className="card-header">
+                                <span className="card-title">PKE AGENTS STATUS</span>
+                            </div>
+                            <div className="card-body">
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(2, 1fr)', 
+                                    gap: '12px' 
+                                }}>
+                                    {courseData.pkeAgents.map(agent => (
+                                        <div key={agent.id} style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '12px',
+                                            padding: '14px',
+                                            background: 'var(--bg-dark)',
+                                            borderRadius: '4px',
+                                            border: `1px solid ${agent.status === 'active' ? agent.color : 'var(--border)'}`,
+                                            transition: 'all 0.3s ease'
+                                        }}>
+                                            <div 
+                                                className={agent.status === 'active' ? 'status-dot status-active' : 'status-dot status-idle'}
+                                                style={{ background: agent.status === 'active' ? agent.color : undefined }}
+                                            />
+                                            <div style={{ flex: 1 }}>
+                                                <div className="mono" style={{ 
+                                                    fontSize: '10px', 
+                                                    color: 'var(--text-primary)',
+                                                    letterSpacing: '1px'
+                                                }}>
+                                                    {agent.name}
+                                                </div>
+                                                <div className="mono" style={{ 
+                                                    fontSize: '8px', 
+                                                    color: agent.status === 'active' ? agent.color : 'var(--text-dim)' 
+                                                }}>
+                                                    {agent.status.toUpperCase()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // =================== CONFIGURATION VIEW ===================
+            const ConfigurationView = () => (
+                <div className={`section-container ${sectionVisible ? 'active' : 'exiting'}`}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+                        {/* Left Column - Course Details */}
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">COURSE DETAILS</span>
+                            </div>
+                            <div className="card-body">
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                    <div>
+                                        <label className="mono" style={{ 
+                                            display: 'block', 
+                                            fontSize: '8px', 
+                                            letterSpacing: '2px', 
+                                            color: 'var(--text-dim)', 
+                                            marginBottom: '10px' 
+                                        }}>
+                                            COURSE TITLE
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            value={courseData.title} 
+                                            onChange={(e) => updateCourseField('title', e.target.value)}
+                                            placeholder="Enter course title"
+                                        />
+                                    </div>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                                        <div>
+                                            <label className="mono" style={{ 
+                                                display: 'block', 
+                                                fontSize: '8px', 
+                                                letterSpacing: '2px', 
+                                                color: 'var(--text-dim)', 
+                                                marginBottom: '10px' 
+                                            }}>
+                                                LEVEL
+                                            </label>
+                                            <select 
+                                                value={courseData.level} 
+                                                onChange={(e) => updateCourseField('level', e.target.value)}
+                                            >
+                                                <option value="">Select Level</option>
+                                                <option value="Foundation">Foundation</option>
+                                                <option value="Intermediate">Intermediate</option>
+                                                <option value="Advanced">Advanced</option>
+                                                <option value="Expert">Expert</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="mono" style={{ 
+                                                display: 'block', 
+                                                fontSize: '8px', 
+                                                letterSpacing: '2px', 
+                                                color: 'var(--text-dim)', 
+                                                marginBottom: '10px' 
+                                            }}>
+                                                THEMATIC AREA
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                value={courseData.thematic} 
+                                                onChange={(e) => updateCourseField('thematic', e.target.value)}
+                                                placeholder="e.g., Intelligence"
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+                                        <div>
+                                            <label className="mono" style={{ 
+                                                display: 'block', 
+                                                fontSize: '8px', 
+                                                letterSpacing: '2px', 
+                                                color: 'var(--text-dim)', 
+                                                marginBottom: '10px' 
+                                            }}>
+                                                DURATION
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                value={courseData.duration} 
+                                                onChange={(e) => updateCourseField('duration', e.target.value)}
+                                                placeholder="e.g., 5 Days"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="mono" style={{ 
+                                                display: 'block', 
+                                                fontSize: '8px', 
+                                                letterSpacing: '2px', 
+                                                color: 'var(--text-dim)', 
+                                                marginBottom: '10px' 
+                                            }}>
+                                                CODE
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                value={courseData.code} 
+                                                onChange={(e) => updateCourseField('code', e.target.value)}
+                                                placeholder="INT-001"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="mono" style={{ 
+                                                display: 'block', 
+                                                fontSize: '8px', 
+                                                letterSpacing: '2px', 
+                                                color: 'var(--text-dim)', 
+                                                marginBottom: '10px' 
+                                            }}>
+                                                DEVELOPER
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                value={courseData.developer} 
+                                                onChange={(e) => updateCourseField('developer', e.target.value)}
+                                                placeholder="Name"
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{ 
+                                        borderTop: '1px solid var(--border)', 
+                                        paddingTop: '20px',
+                                        marginTop: '5px'
+                                    }}>
+                                        <label className="mono" style={{ 
+                                            display: 'block', 
+                                            fontSize: '8px', 
+                                            letterSpacing: '2px', 
+                                            color: 'var(--text-dim)', 
+                                            marginBottom: '10px' 
+                                        }}>
+                                            LOAD EXISTING COURSE
+                                        </label>
+                                        <div style={{ display: 'flex', gap: '12px' }}>
+                                            <select 
+                                                onChange={(e) => e.target.value && loadCourse(e.target.value)} 
+                                                style={{ flex: 1 }}
+                                            >
+                                                <option value="">Select Course Template</option>
+                                                {sampleCourses.map(c => (
+                                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                                ))}
+                                            </select>
+                                            <button className="btn btn-outline btn-sm">LOAD</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Right Column */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                            {/* Description */}
+                            <div className="card" style={{ flex: 1 }}>
+                                <div className="card-header">
+                                    <span className="card-title">DESCRIPTION</span>
+                                </div>
+                                <div className="card-body">
+                                    <textarea 
+                                        value={courseData.description} 
+                                        onChange={(e) => updateCourseField('description', e.target.value)}
+                                        placeholder="Enter course description and overview..."
+                                        style={{ height: '130px', resize: 'vertical' }}
+                                    />
+                                </div>
+                            </div>
+                            
+                            {/* Generation Settings */}
+                            <div className="card">
+                                <div className="card-header">
+                                    <span className="card-title">GENERATION SETTINGS</span>
+                                </div>
+                                <div className="card-body">
+                                    {[
+                                        { key: 'contentDepth', label: 'Content Depth', left: 'CONCISE', right: 'COMPREHENSIVE' },
+                                        { key: 'assessmentRigor', label: 'Assessment Rigor', left: 'INFORMAL', right: 'FORMAL' },
+                                        { key: 'resourceDensity', label: 'Resource Density', left: 'ESSENTIAL', right: 'EXTENSIVE' }
+                                    ].map((setting, idx) => (
+                                        <div key={setting.key} style={{ marginBottom: idx < 2 ? '22px' : 0 }}>
+                                            <div className="mono" style={{ 
+                                                fontSize: '8px', 
+                                                letterSpacing: '2px', 
+                                                color: 'var(--text-dim)', 
+                                                marginBottom: '12px' 
+                                            }}>
+                                                {setting.label.toUpperCase()}
+                                            </div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                                <span className="mono" style={{ 
+                                                    fontSize: '7px', 
+                                                    color: 'var(--text-muted)', 
+                                                    width: '85px',
+                                                    letterSpacing: '1px'
+                                                }}>
+                                                    {setting.left}
+                                                </span>
+                                                <input 
+                                                    type="range" 
+                                                    min="0" 
+                                                    max="100" 
+                                                    value={courseData.generationSettings[setting.key]}
+                                                    onChange={(e) => setCourseData(prev => ({
+                                                        ...prev,
+                                                        generationSettings: {
+                                                            ...prev.generationSettings,
+                                                            [setting.key]: parseInt(e.target.value)
+                                                        }
+                                                    }))}
+                                                    style={{ 
+                                                        flex: 1, 
+                                                        accentColor: 'var(--amber)',
+                                                        height: '4px'
+                                                    }}
+                                                />
+                                                <span className="mono" style={{ 
+                                                    fontSize: '7px', 
+                                                    color: 'var(--text-muted)', 
+                                                    width: '85px', 
+                                                    textAlign: 'right',
+                                                    letterSpacing: '1px'
+                                                }}>
+                                                    {setting.right}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Learning Objectives */}
+                    <div className="card" style={{ marginTop: '25px' }}>
+                        <div className="card-header">
+                            <span className="card-title">LEARNING OBJECTIVES</span>
+                            <button 
+                                onClick={addLearningObjective} 
+                                className="btn btn-success btn-sm"
+                            >
+                                {Icons.plus} ADD OBJECTIVE
+                            </button>
+                        </div>
+                        <div className="card-body">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                {courseData.learningObjectives.map((lo, index) => (
+                                    <div key={index} style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '15px' 
+                                    }}>
+                                        <span className="mono" style={{ 
+                                            color: 'var(--amber)', 
+                                            width: '35px', 
+                                            fontSize: '12px',
+                                            fontWeight: 600
+                                        }}>
+                                            {(index + 1).toString().padStart(2, '0')}
+                                        </span>
+                                        <input 
+                                            type="text" 
+                                            value={lo} 
+                                            onChange={(e) => updateLearningObjective(index, e.target.value)}
+                                            placeholder={`Learning Objective ${index + 1}`}
+                                            style={{ flex: 1 }}
+                                        />
+                                        <button 
+                                            onClick={() => removeLearningObjective(index)} 
+                                            className="btn btn-danger btn-sm"
+                                            style={{ padding: '10px 14px' }}
+                                            disabled={courseData.learningObjectives.length <= 1}
+                                        >
+                                            {Icons.trash}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // =================== SCALAR VIEW ===================
+            const ScalarView = () => {
+                const currentModule = courseData.modules.find(m => m.id === selectedModule) || courseData.modules[0];
+                
+                return (
+                    <div className={`section-container ${sectionVisible ? 'active' : 'exiting'}`}>
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">CONTENT SCALAR MATRIX</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span className="mono" style={{ fontSize: '9px', color: 'var(--text-dim)', letterSpacing: '1px' }}>MODULE:</span>
+                                        <select 
+                                            value={selectedModule} 
+                                            onChange={(e) => setSelectedModule(parseInt(e.target.value))}
+                                            style={{ width: '80px' }}
+                                        >
+                                            {courseData.modules.map(m => (
+                                                <option key={m.id} value={m.id}>MODULE {m.id}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <button className="btn btn-success btn-sm">{Icons.plus} ADD</button>
+                                </div>
+                            </div>
+                            <div className="card-body">
+                                {/* Column Headers */}
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(5, 1fr)', 
+                                    gap: '15px', 
+                                    marginBottom: '20px',
+                                    paddingBottom: '15px',
+                                    borderBottom: '1px solid var(--border)'
+                                }}>
+                                    {[
+                                        { name: 'Learning Objective', color: 'var(--green-light)' },
+                                        { name: 'Lesson', color: 'var(--amber)' },
+                                        { name: 'Topic', color: 'var(--cyan-light)' },
+                                        { name: 'Subtopic', color: 'var(--text-secondary)' },
+                                        { name: 'Performance Criteria', color: 'var(--amber-light)' }
+                                    ].map((header, idx) => (
+                                        <div key={header.name}>
+                                            <div className="mono" style={{ 
+                                                fontSize: '8px', 
+                                                letterSpacing: '1px', 
+                                                color: header.color, 
+                                                marginBottom: '12px' 
+                                            }}>
+                                                {header.name.toUpperCase()}
+                                            </div>
+                                            <input 
+                                                type="text" 
+                                                placeholder={`Add ${header.name}`}
+                                                style={{ fontSize: '10px' }}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                {/* Matrix Content */}
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(5, 1fr)', 
+                                    gap: '15px',
+                                    minHeight: '350px'
+                                }}>
+                                    {/* Learning Objectives Column */}
+                                    <div style={{ borderRight: '1px solid var(--border)', paddingRight: '15px' }}>
+                                        {courseData.learningObjectives.map((lo, idx) => (
+                                            <div 
+                                                key={idx}
+                                                style={{
+                                                    padding: '12px',
+                                                    marginBottom: '10px',
+                                                    background: idx === 0 ? 'var(--green-dim)' : 'var(--bg-dark)',
+                                                    border: `1px solid ${idx === 0 ? 'var(--green)' : 'var(--border)'}`,
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s ease'
+                                                }}
+                                            >
+                                                <span className="mono" style={{ 
+                                                    fontSize: '10px', 
+                                                    color: idx === 0 ? 'var(--green-light)' : 'var(--text-primary)' 
+                                                }}>
+                                                    {idx + 1}. {lo.substring(0, 30) || 'Objective'}...
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    {/* Lessons Column */}
+                                    <div style={{ borderRight: '1px solid var(--border)', paddingRight: '15px' }}>
+                                        {currentModule?.lessons.map((lesson, idx) => (
+                                            <div 
+                                                key={idx}
+                                                style={{
+                                                    padding: '12px',
+                                                    marginBottom: '10px',
+                                                    background: idx === 0 ? 'rgba(212, 115, 12, 0.1)' : 'var(--bg-dark)',
+                                                    border: `1px solid ${idx === 0 ? 'var(--amber-dark)' : 'var(--border)'}`,
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                <span className="mono" style={{ 
+                                                    fontSize: '10px', 
+                                                    color: idx === 0 ? 'var(--amber)' : 'var(--text-primary)' 
+                                                }}>
+                                                    {idx + 1}. {lesson.name}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    {/* Topics Column */}
+                                    <div style={{ borderRight: '1px solid var(--border)', paddingRight: '15px' }}>
+                                        {currentModule?.lessons.flatMap((l, lIdx) => 
+                                            l.topics.map((t, tIdx) => (
+                                                <div 
+                                                    key={`${lIdx}-${tIdx}`}
+                                                    style={{
+                                                        padding: '12px',
+                                                        marginBottom: '10px',
+                                                        background: 'var(--bg-dark)',
+                                                        border: '1px solid var(--border)',
+                                                        borderRadius: '4px',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <span className="mono" style={{ fontSize: '10px', color: 'var(--text-primary)' }}>
+                                                        {lIdx + 1}.{tIdx + 1} {t.name}
+                                                    </span>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    
+                                    {/* Subtopics Column */}
+                                    <div style={{ borderRight: '1px solid var(--border)', paddingRight: '15px' }}>
+                                        {currentModule?.lessons.flatMap((l, lIdx) => 
+                                            l.topics.flatMap((t, tIdx) => 
+                                                t.subtopics.map((s, sIdx) => (
+                                                    <div 
+                                                        key={`${lIdx}-${tIdx}-${sIdx}`}
+                                                        style={{
+                                                            padding: '12px',
+                                                            marginBottom: '10px',
+                                                            background: 'var(--bg-dark)',
+                                                            border: '1px solid var(--border)',
+                                                            borderRadius: '4px',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                    >
+                                                        <span className="mono" style={{ fontSize: '10px', color: 'var(--text-primary)' }}>
+                                                            {lIdx + 1}.{tIdx + 1}.{sIdx + 1} {s.name}
+                                                        </span>
+                                                    </div>
+                                                ))
+                                            )
+                                        )}
+                                    </div>
+                                    
+                                    {/* Performance Criteria Column */}
+                                    <div>
+                                        {currentModule?.performanceCriteria.map((pc, idx) => (
+                                            <div 
+                                                key={idx}
+                                                style={{
+                                                    padding: '12px',
+                                                    marginBottom: '10px',
+                                                    background: 'var(--bg-dark)',
+                                                    border: '1px solid var(--border)',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                <span className="mono" style={{ fontSize: '10px', color: 'var(--amber-light)' }}>
+                                                    1.{idx + 1} {pc}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // =================== LESSONS VIEW ===================
+            const LessonsView = () => (
+                <div className={`section-container ${sectionVisible ? 'active' : 'exiting'}`}>
+                    {/* View Toggle */}
+                    <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        gap: '15px', 
+                        marginBottom: '25px' 
+                    }}>
+                        <button 
+                            onClick={() => setBuildView('lessons')} 
+                            className={`btn ${buildView === 'lessons' ? 'btn-primary' : 'btn-outline'}`}
+                        >
+                            LESSON BUILDER
+                        </button>
+                        <button 
+                            onClick={() => setBuildView('timetable')} 
+                            className={`btn ${buildView === 'timetable' ? 'btn-primary' : 'btn-outline'}`}
+                        >
+                            TIMETABLE
+                        </button>
+                    </div>
+                    
+                    {buildView === 'lessons' ? (
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">LESSON CONTENT BUILDER</span>
+                                <div style={{ display: 'flex', gap: '25px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span className="mono" style={{ fontSize: '8px', color: 'var(--text-dim)', letterSpacing: '1px' }}>MODULE:</span>
+                                        <select style={{ width: '70px' }}><option>1</option></select>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span className="mono" style={{ fontSize: '8px', color: 'var(--amber)', letterSpacing: '1px' }}>LESSON:</span>
+                                        <select style={{ width: '160px' }}><option>1. Introduction</option></select>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span className="mono" style={{ fontSize: '8px', color: 'var(--text-dim)', letterSpacing: '1px' }}>TOPIC:</span>
+                                        <select style={{ width: '140px' }}><option>1.1 Overview</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="card-body">
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(3, 1fr)', 
+                                    gap: '18px' 
+                                }}>
+                                    {[1, 2, 3, 4, 5, 6].map(num => (
+                                        <div key={num} style={{ 
+                                            background: 'var(--bg-dark)', 
+                                            border: '1px solid var(--border)', 
+                                            borderRadius: '5px',
+                                            overflow: 'hidden'
+                                        }}>
+                                            <div style={{ 
+                                                padding: '14px 18px', 
+                                                borderBottom: '1px solid var(--border)',
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center'
+                                            }}>
+                                                <span className="mono" style={{ fontSize: '9px', color: 'var(--text-dim)', letterSpacing: '1px' }}>
+                                                    SUBTOPIC 1.1.{num}
+                                                </span>
+                                                <span style={{ color: 'var(--amber)', fontSize: '10px' }}>{Icons.chevronDown}</span>
+                                            </div>
+                                            <textarea 
+                                                placeholder="Enter subtopic content..."
+                                                style={{ 
+                                                    width: '100%', 
+                                                    height: '120px', 
+                                                    border: 'none', 
+                                                    background: 'transparent',
+                                                    padding: '14px 18px',
+                                                    resize: 'none',
+                                                    fontSize: '11px'
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">COURSE TIMETABLE</span>
+                                <div style={{ display: 'flex', gap: '20px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span className="mono" style={{ fontSize: '8px', color: 'var(--text-dim)', letterSpacing: '1px' }}>MODULE:</span>
+                                        <select style={{ width: '70px' }}><option>1</option></select>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span className="mono" style={{ fontSize: '8px', color: 'var(--text-dim)', letterSpacing: '1px' }}>DAYS:</span>
+                                        <select style={{ width: '70px' }}><option>5</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="card-body" style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px' }}>
+                                    <thead>
+                                        <tr>
+                                            <th style={{ width: '80px' }}></th>
+                                            {['0800', '0830', '0900', '0930', '1000', '1030', '1100', '1130', '1200', '1230', '1300', '1330', '1400', '1430', '1500', '1530'].map(time => (
+                                                <th key={time} className="mono" style={{ 
+                                                    padding: '12px 6px', 
+                                                    color: 'var(--text-dim)', 
+                                                    fontWeight: 400, 
+                                                    textAlign: 'center',
+                                                    borderBottom: '1px solid var(--border)',
+                                                    letterSpacing: '0.5px',
+                                                    fontSize: '8px'
+                                                }}>
+                                                    {time}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[1, 2, 3, 4, 5].map(day => (
+                                            <tr key={day}>
+                                                <td className="mono" style={{ 
+                                                    padding: '16px 12px', 
+                                                    color: 'var(--text-dim)', 
+                                                    borderRight: '1px solid var(--border)',
+                                                    letterSpacing: '2px',
+                                                    fontSize: '9px'
+                                                }}>
+                                                    DAY {day}
+                                                </td>
+                                                {[...Array(16)].map((_, idx) => (
+                                                    <td key={idx} style={{ 
+                                                        padding: '6px 4px', 
+                                                        borderBottom: '1px solid var(--border)',
+                                                        borderRight: idx < 15 ? '1px solid var(--border)' : 'none',
+                                                        height: '60px',
+                                                        verticalAlign: 'top'
+                                                    }}>
+                                                        {day === 1 && idx >= 0 && idx < 4 && (
+                                                            <div style={{ 
+                                                                background: idx < 2 ? 'var(--amber-dark)' : 'var(--green-dim)',
+                                                                border: `1px solid ${idx < 2 ? 'var(--amber)' : 'var(--green)'}`,
+                                                                padding: '8px 6px', 
+                                                                borderRadius: '3px', 
+                                                                fontSize: '8px', 
+                                                                color: idx < 2 ? 'var(--white)' : 'var(--green-light)',
+                                                                textAlign: 'center',
+                                                                height: '100%',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center'
+                                                            }}>
+                                                                {idx < 2 ? 'INTRO' : 'CORE'}
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+
+            // =================== BRAND VIEW ===================
+            const BrandView = () => (
+                <div className={`section-container ${sectionVisible ? 'active' : 'exiting'}`}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+                        {/* Logo Upload */}
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">ORGANISATION LOGO</span>
+                            </div>
+                            <div className="card-body">
+                                <div style={{ 
+                                    border: '2px dashed var(--border-light)', 
+                                    borderRadius: '8px', 
+                                    padding: '60px 40px', 
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    <div style={{ marginBottom: '15px', opacity: 0.5 }}>{Icons.upload}</div>
+                                    <div className="mono" style={{ fontSize: '10px', color: 'var(--text-dim)', letterSpacing: '1px', marginBottom: '8px' }}>
+                                        DROP LOGO HERE OR CLICK TO UPLOAD
+                                    </div>
+                                    <div className="mono" style={{ fontSize: '8px', color: 'var(--text-muted)', letterSpacing: '1px' }}>
+                                        SVG, PNG, JPG (MAX 2MB)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Colors */}
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">BRAND COLOURS</span>
+                            </div>
+                            <div className="card-body">
+                                {[
+                                    { key: 'primaryColor', label: 'PRIMARY' },
+                                    { key: 'secondaryColor', label: 'SECONDARY' }
+                                ].map((color, idx) => (
+                                    <div key={color.key} style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '20px',
+                                        marginBottom: idx === 0 ? '25px' : 0
+                                    }}>
+                                        <span className="mono" style={{ 
+                                            fontSize: '9px', 
+                                            color: 'var(--text-dim)', 
+                                            width: '100px',
+                                            letterSpacing: '2px'
+                                        }}>
+                                            {color.label}
+                                        </span>
+                                        <input 
+                                            type="color" 
+                                            value={courseData.branding[color.key]}
+                                            onChange={(e) => setCourseData(prev => ({
+                                                ...prev,
+                                                branding: { ...prev.branding, [color.key]: e.target.value }
+                                            }))}
+                                            style={{ 
+                                                width: '50px', 
+                                                height: '36px', 
+                                                border: 'none', 
+                                                cursor: 'pointer',
+                                                borderRadius: '4px'
+                                            }}
+                                        />
+                                        <input 
+                                            type="text" 
+                                            value={courseData.branding[color.key]} 
+                                            readOnly 
+                                            style={{ width: '110px', fontSize: '10px', textAlign: 'center' }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Template Library */}
+                    <div className="card" style={{ marginTop: '25px' }}>
+                        <div className="card-header">
+                            <span className="card-title">TEMPLATE LIBRARY</span>
+                        </div>
+                        <div className="card-body">
+                            <div style={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: 'repeat(4, 1fr)', 
+                                gap: '20px' 
+                            }}>
+                                {[
+                                    { id: 'prometheus', name: 'PROMETHEUS STANDARD', desc: 'Default system template' },
+                                    { id: 'defence', name: 'DEFENCE PROFESSIONAL', desc: 'Military & government' },
+                                    { id: 'corporate', name: 'CORPORATE EXECUTIVE', desc: 'Business & enterprise' },
+                                    { id: 'academic', name: 'ACADEMIC INSTITUTION', desc: 'Universities & schools' }
+                                ].map(template => (
+                                    <div 
+                                        key={template.id}
+                                        onClick={() => setCourseData(prev => ({
+                                            ...prev,
+                                            branding: { ...prev.branding, template: template.id }
+                                        }))}
+                                        style={{
+                                            border: `2px solid ${courseData.branding.template === template.id ? 'var(--green)' : 'var(--border)'}`,
+                                            borderRadius: '6px',
+                                            padding: '20px',
+                                            textAlign: 'center',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s ease',
+                                            background: courseData.branding.template === template.id ? 'var(--green-dim)' : 'transparent'
+                                        }}
+                                    >
+                                        <div style={{ 
+                                            width: '100%', 
+                                            height: '100px', 
+                                            background: 'var(--bg-dark)', 
+                                            borderRadius: '4px', 
+                                            marginBottom: '15px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            border: '1px solid var(--border)'
+                                        }}>
+                                            <PrometheusFlame size={40} />
+                                        </div>
+                                        <div className="mono" style={{ 
+                                            fontSize: '9px', 
+                                            letterSpacing: '1px', 
+                                            color: courseData.branding.template === template.id ? 'var(--green-light)' : 'var(--text-secondary)',
+                                            marginBottom: '6px'
+                                        }}>
+                                            {template.name}
+                                        </div>
+                                        <div className="mono" style={{ 
+                                            fontSize: '8px', 
+                                            color: 'var(--text-muted)' 
+                                        }}>
+                                            {template.desc}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // =================== AGENTS VIEW ===================
+            const AgentsView = () => (
+                <div className={`section-container ${sectionVisible ? 'active' : 'exiting'}`}>
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(2, 1fr)', 
+                        gap: '25px' 
+                    }}>
+                        {courseData.pkeAgents.map((agent, idx) => (
+                            <div 
+                                key={agent.id} 
+                                className="card"
+                            >
+                                <div className="card-header" style={{ borderLeft: `3px solid ${agent.color}` }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+                                        <div style={{ 
+                                            width: '55px', 
+                                            height: '55px', 
+                                            borderRadius: '50%', 
+                                            background: `${agent.color}15`,
+                                            border: `2px solid ${agent.color}`,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '24px'
+                                        }}>
+                                            {agent.icon}
+                                        </div>
+                                        <div>
+                                            <div style={{ 
+                                                fontSize: '14px', 
+                                                letterSpacing: '3px', 
+                                                color: 'var(--text-primary)',
+                                                marginBottom: '4px'
+                                            }}>
+                                                {agent.name}
+                                            </div>
+                                            <div className="mono" style={{ 
+                                                fontSize: '9px', 
+                                                color: 'var(--text-dim)',
+                                                letterSpacing: '0.5px'
+                                            }}>
+                                                {agent.role}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span 
+                                            className={`status-dot ${agent.status === 'active' ? 'status-active' : 'status-idle'}`}
+                                            style={{ background: agent.status === 'active' ? agent.color : undefined }}
+                                        />
+                                        <span className="mono" style={{ 
+                                            fontSize: '9px', 
+                                            color: agent.status === 'active' ? agent.color : 'var(--text-dim)',
+                                            letterSpacing: '1px'
+                                        }}>
+                                            {agent.status.toUpperCase()}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="card-body">
+                                    <div style={{ marginBottom: '24px' }}>
+                                        <div style={{ 
+                                            display: 'flex', 
+                                            justifyContent: 'space-between', 
+                                            marginBottom: '10px' 
+                                        }}>
+                                            <span className="mono" style={{ 
+                                                fontSize: '8px', 
+                                                color: 'var(--text-dim)', 
+                                                letterSpacing: '2px' 
+                                            }}>
+                                                PROCESSING QUEUE
+                                            </span>
+                                            <span className="mono" style={{ 
+                                                fontSize: '9px', 
+                                                color: agent.status === 'active' ? agent.color : 'var(--text-muted)' 
+                                            }}>
+                                                {agent.progress}%
+                                            </span>
+                                        </div>
+                                        <div style={{ 
+                                            height: '6px', 
+                                            background: 'var(--bg-dark)', 
+                                            borderRadius: '3px', 
+                                            overflow: 'hidden' 
+                                        }}>
+                                            <div style={{ 
+                                                width: `${agent.progress}%`, 
+                                                height: '100%', 
+                                                background: agent.color,
+                                                borderRadius: '3px',
+                                                transition: 'width 0.6s ease'
+                                            }} />
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '12px' }}>
+                                        <button className="btn btn-outline" style={{ flex: 1, padding: '12px' }}>
+                                            CONFIGURE
+                                        </button>
+                                        <button 
+                                            className="btn btn-primary" 
+                                            style={{ flex: 1, padding: '12px' }}
+                                        >
+                                            {agent.status === 'active' ? Icons.pause : Icons.play}
+                                            {agent.status === 'active' ? 'PAUSE' : 'ACTIVATE'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            // =================== ANALYTICS VIEW ===================
+            const AnalyticsView = () => <DashboardView />;
+
+            // =================== GENERATE VIEW ===================
+            const GenerateView = () => (
+                <div className={`section-container ${sectionVisible ? 'active' : 'exiting'}`}>
+                    <div className="card">
+                        <div className="card-header">
+                            <span className="card-title">GENERATION CONTROLS</span>
+                        </div>
+                        <div className="card-body">
+                            {/* Controls Row */}
+                            <div style={{ 
+                                display: 'flex', 
+                                flexWrap: 'wrap', 
+                                gap: '25px', 
+                                marginBottom: '35px',
+                                justifyContent: 'center'
+                            }}>
+                                {[
+                                    { label: 'OUTPUT TYPE', options: ['Presentation', 'Lesson Plan', 'Workbook', 'Handbook', 'Full Package'], width: '180px' },
+                                    { label: 'FORMAT', options: ['PPTX', 'DOCX', 'PDF', 'ALL'], width: '100px' },
+                                    { label: 'MODULE', options: ['All Modules', '1', '2', '3'], width: '120px' },
+                                    { label: 'DAYS', options: ['All Days', '1-2', '3-4', '5'], width: '100px' }
+                                ].map(item => (
+                                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <span className="mono" style={{ 
+                                            fontSize: '8px', 
+                                            color: 'var(--text-dim)', 
+                                            letterSpacing: '2px' 
+                                        }}>
+                                            {item.label}
+                                        </span>
+                                        <select style={{ width: item.width }}>
+                                            {item.options.map(opt => <option key={opt}>{opt}</option>)}
+                                        </select>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            {/* Preview Area */}
+                            <div style={{ 
+                                width: '100%', 
+                                height: '220px', 
+                                background: 'var(--bg-base)', 
+                                border: '1px solid var(--border)', 
+                                borderRadius: '6px', 
+                                marginBottom: '35px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <PrometheusFlame size={50} />
+                                    <div className="mono" style={{ 
+                                        fontSize: '10px', 
+                                        color: 'var(--text-dim)', 
+                                        letterSpacing: '3px',
+                                        marginTop: '15px'
+                                    }}>
+                                        OUTPUT PREVIEW
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Action Buttons */}
+                            <div style={{ 
+                                display: 'flex', 
+                                justifyContent: 'center', 
+                                gap: '20px', 
+                                marginBottom: '45px' 
+                            }}>
+                                <button className="btn btn-primary" style={{ padding: '16px 60px' }}>
+                                    {Icons.generate} GENERATE
+                                </button>
+                                <button className="btn btn-outline" style={{ padding: '16px 40px' }}>
+                                    VIEW OUTPUT
+                                </button>
+                            </div>
+                            
+                            {/* Output Selection */}
+                            <div style={{ 
+                                borderTop: '1px solid var(--border)', 
+                                paddingTop: '35px' 
+                            }}>
+                                <div style={{ 
+                                    fontSize: '10px', 
+                                    letterSpacing: '3px', 
+                                    color: 'var(--text-secondary)', 
+                                    marginBottom: '30px', 
+                                    textAlign: 'center' 
+                                }}>
+                                    OUTPUT SELECTION
+                                </div>
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(3, 1fr)', 
+                                    gap: '40px' 
+                                }}>
+                                    {[
+                                        { title: 'STRATEGIC DOCUMENTS', items: courseData.outputs.strategic, color: 'var(--amber)' },
+                                        { title: 'INSTRUCTOR MATERIALS', items: courseData.outputs.instructor, color: 'var(--green-light)' },
+                                        { title: 'LEARNER MATERIALS', items: courseData.outputs.learner, color: 'var(--cyan-light)' }
+                                    ].map(section => (
+                                        <div key={section.title}>
+                                            <div className="mono" style={{ 
+                                                fontSize: '9px', 
+                                                letterSpacing: '2px', 
+                                                color: section.color, 
+                                                marginBottom: '18px',
+                                                paddingBottom: '10px',
+                                                borderBottom: `1px solid ${section.color}30`
+                                            }}>
+                                                {section.title}
+                                            </div>
+                                            {section.items.map(item => (
+                                                <label key={item} style={{ 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    gap: '12px', 
+                                                    marginBottom: '14px', 
+                                                    cursor: 'pointer' 
+                                                }}>
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={selectedOutputs.includes(item)}
+                                                        onChange={() => toggleOutput(item)}
+                                                        style={{ accentColor: section.color }}
+                                                    />
+                                                    <span className="mono" style={{ 
+                                                        fontSize: '10px', 
+                                                        color: 'var(--text-primary)',
+                                                        letterSpacing: '0.5px'
+                                                    }}>
+                                                        {item}
+                                                    </span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // =================== SECTION RENDERER ===================
+            const renderSection = () => {
+                switch (currentSection) {
+                    case 'dashboard': return <DashboardView />;
+                    case 'config': return <ConfigurationView />;
+                    case 'scalar': return <ScalarView />;
+                    case 'lessons': return <LessonsView />;
+                    case 'brand': return <BrandView />;
+                    case 'agents': return <AgentsView />;
+                    case 'analytics': return <AnalyticsView />;
+                    case 'generate': return <GenerateView />;
+                    default: return <DashboardView />;
+                }
+            };
+
+            // =================== MAIN RENDER ===================
+            return (
+                <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
+                    <Header 
+                        courseData={courseData} 
+                        currentTime={currentTime}
+                        currentSection={currentSection}
+                        sections={sections}
+                    />
+                    
+                    <main style={{ 
+                        padding: '30px 40px 100px 140px',
+                        minHeight: 'calc(100vh - 85px)'
+                    }}>
+                        {renderSection()}
+                    </main>
+                    
+                    <NavigationCompass
+                        currentSection={currentSection}
+                        onNavigate={handleNavigate}
+                        sections={sections}
+                        isExpanded={compassExpanded}
+                        onToggle={() => setCompassExpanded(prev => !prev)}
+                    />
+                    
+                    <StatusBar 
+                        owner="MATTHEW DODDS" 
+                        status="DEVELOPMENT" 
+                        progress={35}
+                    />
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
