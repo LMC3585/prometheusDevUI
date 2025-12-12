@@ -94,6 +94,29 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
     setIsPKEActive(false)
   }, [formData, setCourseData])
 
+  // Bloom's Taxonomy verbs for validation
+  const bloomsVerbs = [
+    // Remember
+    'DEFINE', 'DESCRIBE', 'IDENTIFY', 'LIST', 'NAME', 'RECALL', 'RECOGNIZE', 'STATE',
+    // Understand
+    'CLASSIFY', 'COMPARE', 'CONTRAST', 'EXPLAIN', 'INTERPRET', 'PARAPHRASE', 'SUMMARIZE', 'DISCUSS',
+    // Apply
+    'APPLY', 'DEMONSTRATE', 'EXECUTE', 'IMPLEMENT', 'OPERATE', 'PERFORM', 'SOLVE', 'USE',
+    // Analyze
+    'ANALYSE', 'ANALYZE', 'DIFFERENTIATE', 'DISTINGUISH', 'EXAMINE', 'INVESTIGATE', 'ORGANIZE', 'RELATE',
+    // Evaluate
+    'APPRAISE', 'ASSESS', 'CRITIQUE', 'EVALUATE', 'JUDGE', 'JUSTIFY', 'RECOMMEND', 'SUPPORT',
+    // Create
+    'COMPOSE', 'CONSTRUCT', 'CREATE', 'DESIGN', 'DEVELOP', 'FORMULATE', 'GENERATE', 'PRODUCE'
+  ]
+
+  // Check if LO starts with a Bloom's verb
+  const validateBloomsVerb = useCallback((text) => {
+    if (!text || text.trim().length === 0) return null // No validation for empty
+    const firstWord = text.trim().split(/\s+/)[0].toUpperCase()
+    return bloomsVerbs.includes(firstWord)
+  }, [])
+
   // Thematic options
   const thematicOptions = [
     'Defence & Security',
@@ -128,7 +151,7 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
       >
         <h1
           style={{
-            fontSize: '18px',
+            fontSize: '20px',
             letterSpacing: '6px',
             color: THEME.OFF_WHITE,
             fontFamily: THEME.FONT_PRIMARY
@@ -158,7 +181,8 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
           gridTemplateColumns: '1fr 1fr 1fr',
           gap: '40px',
           padding: '0 60px',
-          paddingBottom: '180px' // Space for bottom controls
+          paddingBottom: '120px', // Space for bottom controls
+          overflow: 'auto'
         }}
       >
         {/* LEFT COLUMN - DETAILS */}
@@ -220,7 +244,14 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle(isFieldActive('module'))}>Module</label>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                <button
+                  onClick={() => updateField('module', Math.max(1, formData.module - 1))}
+                  style={smallButtonStyle}
+                  disabled={formData.module <= 1}
+                >
+                  −
+                </button>
                 <GradientBorder isActive={isFieldActive('module')}>
                   <input
                     type="number"
@@ -454,54 +485,78 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
 
           {/* LO List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {formData.learningObjectives.map((lo, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    background: THEME.AMBER_DARK,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '11px',
-                    color: THEME.WHITE,
-                    fontFamily: THEME.FONT_MONO,
-                    flexShrink: 0
-                  }}
-                >
-                  {idx + 1}
-                </span>
-                <GradientBorder isActive={isFieldActive(`lo-${idx}`)} className="flex-1">
-                  <input
-                    type="text"
-                    value={lo}
-                    onChange={(e) => updateLO(idx, e.target.value)}
-                    onFocus={() => setFocusedField(`lo-${idx}`)}
-                    onBlur={() => setFocusedField(null)}
-                    style={inputStyle}
-                    placeholder={idx === 0 ? "EXPLAIN something..." : "Enter learning objective..."}
-                  />
-                </GradientBorder>
-                {idx === formData.learningObjectives.length - 1 && (
-                  <button onClick={addLO} style={smallButtonStyle}>+</button>
-                )}
-              </div>
-            ))}
+            {formData.learningObjectives.map((lo, idx) => {
+              const isValid = validateBloomsVerb(lo)
+              return (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {/* LO number with validation indicator */}
+                  <span
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      background: isValid === null
+                        ? THEME.AMBER_DARK
+                        : isValid
+                          ? THEME.GREEN_DARK || '#1a4d1a'
+                          : THEME.RED_DARK || '#4d1a1a',
+                      border: isValid === null
+                        ? 'none'
+                        : `2px solid ${isValid ? THEME.GREEN_LIGHT : THEME.RED_LIGHT}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '11px',
+                      color: THEME.WHITE,
+                      fontFamily: THEME.FONT_MONO,
+                      flexShrink: 0,
+                      transition: 'all 0.3s ease'
+                    }}
+                    title={isValid === null ? 'Enter learning objective' : isValid ? 'Valid Bloom\'s verb' : 'Start with a Bloom\'s verb'}
+                  >
+                    {idx + 1}
+                  </span>
+                  <GradientBorder isActive={isFieldActive(`lo-${idx}`)} className="flex-1">
+                    <input
+                      type="text"
+                      value={lo}
+                      onChange={(e) => updateLO(idx, e.target.value)}
+                      onFocus={() => setFocusedField(`lo-${idx}`)}
+                      onBlur={() => setFocusedField(null)}
+                      style={{
+                        ...inputStyle,
+                        borderLeft: isValid === false ? `3px solid ${THEME.RED_LIGHT}` : 'none'
+                      }}
+                      placeholder={idx === 0 ? "EXPLAIN something..." : "Enter learning objective..."}
+                    />
+                  </GradientBorder>
+                  {idx === formData.learningObjectives.length - 1 && (
+                    <button onClick={addLO} style={smallButtonStyle}>+</button>
+                  )}
+                </div>
+              )
+            })}
           </div>
 
-          {/* CLO hint */}
+          {/* CLO hint with Bloom's verb examples */}
           <div
             style={{
               fontSize: '8px',
               color: THEME.TEXT_DIM,
               fontFamily: THEME.FONT_MONO,
               marginTop: '8px',
-              letterSpacing: '1px'
+              letterSpacing: '1px',
+              lineHeight: '1.6'
             }}
           >
-            TIP: Start with a Bloom's verb (EXPLAIN, DESCRIBE, ANALYSE...)
+            <div style={{ marginBottom: '4px' }}>
+              <span style={{ color: THEME.AMBER }}>TIP:</span> Start with a Bloom's verb
+            </div>
+            <div style={{ fontSize: '7px', color: THEME.TEXT_MUTED }}>
+              REMEMBER: Define, Identify, List | UNDERSTAND: Explain, Describe, Compare<br/>
+              APPLY: Apply, Demonstrate, Solve | ANALYZE: Analyse, Examine, Investigate<br/>
+              EVALUATE: Assess, Critique, Justify | CREATE: Design, Develop, Produce
+            </div>
           </div>
         </div>
       </div>
@@ -598,7 +653,7 @@ const inputStyle = {
   padding: '10px 12px',
   background: THEME.BG_INPUT,
   border: 'none',
-  borderRadius: '3px',
+  borderRadius: '4px',
   color: THEME.TEXT_PRIMARY,
   fontSize: '12px',
   fontFamily: THEME.FONT_MONO,

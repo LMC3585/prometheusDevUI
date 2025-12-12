@@ -26,15 +26,36 @@ body {
   background-color: #0d0d0d;
   color: #e0e0e0;
   font-family: Candara, Calibri, 'Segoe UI', sans-serif;
+  font-size: 14px; /* Base font size minimum */
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ============================================
+   TYPOGRAPHY RULES - Prometheus 2.0
+   Minimum sizes and letter-spacing constraints
+   ============================================ */
+
+/* Body text minimum */
+p, span, div {
+  font-size: inherit; /* Respects component sizing */
+}
+
+/* Labels - minimum 12px */
+label, .label {
+  font-size: max(12px, inherit);
+}
+
+/* Buttons - minimum 14px */
+button, .btn, input[type="submit"], input[type="button"] {
+  font-size: max(14px, inherit);
+}
+
 /*
- * Prometheus UI is designed for 1920×1080 minimum resolution
- * Smaller viewports scale proportionally (no horizontal scrollbar)
- * Scaling is handled by useViewportScale hook in App.jsx
+ * Prometheus UI is designed for 1920×1080 base resolution
+ * Viewport scaling is handled by useScaleToFit() in App.jsx
+ * Scale = Math.min(viewportW/1920, viewportH/1080)
  */
 #root {
   min-height: 100vh;

@@ -50,11 +50,12 @@ export const THEME = {
 
   // ============================================
   // TEXT COLORS
+  // Updated: improved contrast for dark greys (110-150 range)
   // ============================================
   TEXT_PRIMARY: '#d8d8d8',
   TEXT_SECONDARY: '#a0a0a0',
-  TEXT_DIM: '#555555',
-  TEXT_MUTED: '#404040',
+  TEXT_DIM: '#6e6e6e',      // Was #555555 (85) → now #6e6e6e (110)
+  TEXT_MUTED: '#787878',     // Was #404040 (64) → now #787878 (120)
   WHITE: '#f0f0f0',
   OFF_WHITE: '#f2f2f2',
 
@@ -77,6 +78,22 @@ export const THEME = {
   // ============================================
   FONT_PRIMARY: "'Candara', 'Calibri', sans-serif",
   FONT_MONO: "'Cascadia Code', 'Consolas', monospace",
+
+  // Typography scale minimums (used as fallback for scaled UI)
+  FONT_SIZE_BODY: '14px',      // Body text minimum
+  FONT_SIZE_LABEL: '12px',     // Small labels minimum
+  FONT_SIZE_BUTTON: '14px',    // Button text minimum
+  FONT_SIZE_TITLE: '18px',     // Section titles
+  FONT_SIZE_HEADING: '24px',   // Page headings
+
+  // Letter-spacing constraints
+  // <= 12px fonts: max 2px letter-spacing
+  // 13-18px fonts: max 4px
+  // > 18px fonts: max 6px
+  LETTER_SPACING_TIGHT: '1px',
+  LETTER_SPACING_NORMAL: '2px',
+  LETTER_SPACING_WIDE: '4px',
+  LETTER_SPACING_EXTRA: '6px',
 
   // ============================================
   // GRADIENTS

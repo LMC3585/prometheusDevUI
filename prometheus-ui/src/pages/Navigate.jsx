@@ -14,7 +14,7 @@
 import { useCallback } from 'react'
 import { THEME } from '../constants/theme'
 import NavWheel from '../components/NavWheel'
-import logo from '../assets/prometheus-logo.png'
+import logo from '../assets/burntorangelogo.png'
 
 function Navigate({ onNavigate, courseData = {} }) {
   // Handle navigation from wheel
@@ -165,13 +165,13 @@ function Navigate({ onNavigate, courseData = {} }) {
           position: 'relative'
         }}
       >
-        {/* NavWheel - Always expanded on this page */}
+        {/* NavWheel - Always expanded on this page (+50% larger: 400→600px) */}
         <div
           className="fade-in-scale"
           style={{
             position: 'relative',
-            width: '400px',
-            height: '400px',
+            width: '600px',
+            height: '600px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -285,14 +285,26 @@ function NavigateWheel({ onNavigate }) {
   ]
   const centerSection = { id: 'generate', label: 'GENERATE' }
 
-  const size = 350
-  const labelRadius = 130
+  // +50% size: 350 → 525
+  const size = 525
+  // Inner dashed circle radius - increased by 40%: 210 → 294
+  const innerCircleRadius = 294
 
-  const getSectionPosition = (angle) => {
-    const radians = (angle - 90) * (Math.PI / 180)
-    const x = Math.cos(radians) * labelRadius
-    const y = Math.sin(radians) * labelRadius
-    return { x, y }
+  // Fixed label positions per user spec (relative to wheel center at 262.5, 262.5)
+  // Container is 600x600, wheel is 525x525 centered, so wheel top-left is at (37.5, 37.5) in container
+  // User coords are absolute in 1920x1080 viewport where wheel is centered
+  // DEFINE: Y=140 means label center is ~122px above wheel center
+  // BUILD: Y=585 means label center is ~322px below wheel center
+  // DESIGN: X=+220 means label right edge at X offset +220 from center
+  // FORMAT: X=-320 means label LEFT edge at X offset -320 from center
+  const getLabelPosition = (sectionId) => {
+    switch(sectionId) {
+      case 'define': return { x: 0, y: -180 }       // North - moved further up
+      case 'build': return { x: 0, y: 180 }         // South - moved further down
+      case 'design': return { x: 200, y: 0 }        // East - moved further right
+      case 'format': return { x: -200, y: 0 }       // West - moved further left
+      default: return { x: 0, y: 0 }
+    }
   }
 
   return (
@@ -324,11 +336,11 @@ function NavigateWheel({ onNavigate }) {
           opacity="0.8"
         />
 
-        {/* Inner dashed circle */}
+        {/* Inner dashed circle - radius increased by 40% */}
         <circle
           cx={size / 2}
           cy={size / 2}
-          r={labelRadius}
+          r={innerCircleRadius}
           fill="none"
           stroke={THEME.BORDER}
           strokeWidth="1"
@@ -389,10 +401,17 @@ function NavigateWheel({ onNavigate }) {
         })}
       </svg>
 
-      {/* Section labels */}
+      {/* Section labels - positioned using fixed coordinates to avoid overlap */}
       {sections.map((section) => {
-        const pos = getSectionPosition(section.angle)
+        const pos = getLabelPosition(section.id)
         const isHovered = hoveredSection === section.id
+
+        // FORMAT label needs left-edge alignment, others are center-aligned
+        const transformStyle = section.id === 'format'
+          ? 'translate(0, -50%)'  // Left edge aligned
+          : section.id === 'design'
+            ? 'translate(-100%, -50%)' // Right edge aligned
+            : 'translate(-50%, -50%)' // Center aligned
 
         return (
           <div
@@ -404,15 +423,15 @@ function NavigateWheel({ onNavigate }) {
               position: 'absolute',
               left: `calc(50% + ${pos.x}px)`,
               top: `calc(50% + ${pos.y}px)`,
-              transform: 'translate(-50%, -50%)',
-              fontSize: '14px',
+              transform: transformStyle,
+              fontSize: '18px',
               fontFamily: THEME.FONT_PRIMARY,
-              letterSpacing: '4px',
+              letterSpacing: '5px',
               fontWeight: isHovered ? '600' : '400',
               color: isHovered ? THEME.AMBER : THEME.TEXT_SECONDARY,
-              textShadow: isHovered ? `0 0 15px ${THEME.AMBER}` : 'none',
+              textShadow: isHovered ? `0 0 20px ${THEME.AMBER}` : 'none',
               cursor: 'pointer',
-              padding: '10px 16px',
+              padding: '12px 20px',
               borderRadius: '4px',
               background: isHovered ? 'rgba(212, 115, 12, 0.1)' : 'transparent',
               transition: 'all 0.3s ease'
@@ -423,7 +442,7 @@ function NavigateWheel({ onNavigate }) {
         )
       })}
 
-      {/* Center hub */}
+      {/* Center hub - +50% larger: 90→135px */}
       <div
         onClick={() => onNavigate?.(centerSection.id)}
         onMouseEnter={() => setHoveredSection(centerSection.id)}
@@ -433,11 +452,11 @@ function NavigateWheel({ onNavigate }) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '90px',
-          height: '90px',
+          width: '135px',
+          height: '135px',
           borderRadius: '50%',
           background: THEME.BG_DARK,
-          border: `2px solid ${hoveredSection === centerSection.id ? THEME.AMBER : THEME.AMBER_DARK}`,
+          border: `3px solid ${hoveredSection === centerSection.id ? THEME.AMBER : THEME.AMBER_DARK}`,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -445,14 +464,14 @@ function NavigateWheel({ onNavigate }) {
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           boxShadow: hoveredSection === centerSection.id
-            ? `0 0 30px rgba(212, 115, 12, 0.5)`
-            : `0 0 15px rgba(212, 115, 12, 0.2)`
+            ? `0 0 40px rgba(212, 115, 12, 0.5)`
+            : `0 0 20px rgba(212, 115, 12, 0.2)`
         }}
       >
         <span
           style={{
-            fontSize: '9px',
-            letterSpacing: '2px',
+            fontSize: '17px',
+            letterSpacing: '3px',
             color: hoveredSection === centerSection.id ? THEME.AMBER : THEME.TEXT_DIM,
             fontFamily: THEME.FONT_PRIMARY,
             transition: 'color 0.3s ease'

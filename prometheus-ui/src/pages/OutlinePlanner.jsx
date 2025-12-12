@@ -29,9 +29,9 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
   const [startTime, setStartTime] = useState(8) // 0800
   const [endTime, setEndTime] = useState(16) // 1600
 
-  // Lesson bubbles organized by day
+  // Lesson bubbles organized by day (with duration)
   const [lessonsByDay, setLessonsByDay] = useState({
-    1: [{ id: 'intro', name: 'INTRODUCTION', column: 0 }],
+    1: [{ id: 'intro', name: 'INTRODUCTION', column: 0, duration: 1 }],
     2: [],
     3: [],
     4: [],
@@ -69,7 +69,7 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
   // Add new bubble
   const handleAddBubble = useCallback((afterId) => {
     const newId = `lesson-${Date.now()}`
-    const newBubble = { id: newId, name: 'NEW LESSON', column: 1 }
+    const newBubble = { id: newId, name: 'NEW LESSON', column: 1, duration: 1 }
 
     // Find which day has this bubble and add after it
     setLessonsByDay(prev => {
@@ -83,6 +83,36 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
             ...updated[day].slice(idx + 1)
           ]
         }
+      })
+      return updated
+    })
+  }, [])
+
+  // Update bubble name
+  const handleBubbleNameChange = useCallback((bubbleId, newName) => {
+    setLessonsByDay(prev => {
+      const updated = { ...prev }
+      Object.keys(updated).forEach(day => {
+        updated[day] = updated[day].map(b =>
+          b.id === bubbleId ? { ...b, name: newName } : b
+        )
+      })
+      return updated
+    })
+    // Update lesson details if this is selected bubble
+    if (selectedBubble === bubbleId) {
+      setLessonDetails(prev => ({ ...prev, name: newName }))
+    }
+  }, [selectedBubble])
+
+  // Update bubble duration
+  const handleBubbleDurationChange = useCallback((bubbleId, newDuration) => {
+    setLessonsByDay(prev => {
+      const updated = { ...prev }
+      Object.keys(updated).forEach(day => {
+        updated[day] = updated[day].map(b =>
+          b.id === bubbleId ? { ...b, duration: newDuration } : b
+        )
       })
       return updated
     })
@@ -189,7 +219,7 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
       >
         <h1
           style={{
-            fontSize: '18px',
+            fontSize: '20px',
             letterSpacing: '6px',
             color: THEME.OFF_WHITE,
             fontFamily: THEME.FONT_PRIMARY
@@ -218,16 +248,14 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
           gridTemplateColumns: '2fr 1fr',
           gap: '30px',
           padding: '0 40px',
-          paddingBottom: '180px'
+          paddingBottom: '120px',
+          overflow: 'auto'
         }}
       >
         {/* LEFT PANEL - OUTLINE TIMETABLE */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h2 style={sectionHeaderStyle}>OUTLINE TIMETABLE</h2>
-            <span style={{ fontSize: '10px', color: THEME.TEXT_DIM, fontFamily: THEME.FONT_MONO }}>
-              SET TIMES
-            </span>
           </div>
 
           {/* Time Range Selector */}
@@ -282,7 +310,7 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
               ))}
             </div>
 
-            {/* Day Rows */}
+            {/* Day Rows - Taller rows for better bubble visibility */}
             {Array.from({ length: numDays }, (_, i) => i + 1).map(day => (
               <div
                 key={day}
@@ -291,7 +319,7 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: `80px 1fr`,
-                  minHeight: '60px',
+                  minHeight: '80px',
                   borderBottom: day < numDays ? `1px solid ${THEME.BORDER}` : 'none'
                 }}
               >
@@ -310,9 +338,12 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
                       key={bubble.id}
                       id={bubble.id}
                       name={bubble.name}
+                      duration={bubble.duration || 1}
                       isSelected={selectedBubble === bubble.id}
                       onSelect={handleSelectBubble}
                       onAdd={handleAddBubble}
+                      onNameChange={handleBubbleNameChange}
+                      onDurationChange={handleBubbleDurationChange}
                     />
                   ))}
                 </div>
@@ -330,16 +361,34 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
             </span>
           </div>
 
-          {/* Import Button */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
-            <button style={importButtonStyle}>IMPORT</button>
-            <GradientBorder isActive={false} className="flex-1">
+          {/* Import File Picker */}
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', alignItems: 'center' }}>
+            <label
+              style={{
+                ...importButtonStyle,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer'
+              }}
+            >
               <input
-                type="text"
-                placeholder="Import from scalar..."
-                style={inputStyle}
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  if (file) {
+                    console.log('Import file:', file.name)
+                    // TODO: Handle file import
+                  }
+                }}
               />
-            </GradientBorder>
+              IMPORT
+            </label>
+            <span style={{ fontSize: '10px', color: THEME.TEXT_DIM, fontFamily: THEME.FONT_MONO }}>
+              .xlsx, .xls, .csv
+            </span>
           </div>
 
           {/* Lesson Name */}
@@ -422,19 +471,71 @@ function OutlinePlanner({ onNavigate, courseData, courseLoaded }) {
             ))}
           </div>
 
-          {/* Structure Preview */}
+          {/* Structure Tote - Hierarchical preview */}
           <div
             style={{
-              padding: '12px',
+              padding: '16px',
               background: THEME.BG_INPUT,
               border: `1px solid ${THEME.BORDER}`,
               borderRadius: '4px',
               marginTop: 'auto'
             }}
           >
-            <span style={{ fontSize: '10px', color: THEME.AMBER, fontFamily: THEME.FONT_MONO }}>
-              {buildStructureText()}
-            </span>
+            <div
+              style={{
+                fontSize: '9px',
+                letterSpacing: '2px',
+                color: THEME.AMBER,
+                fontFamily: THEME.FONT_PRIMARY,
+                marginBottom: '12px',
+                paddingBottom: '8px',
+                borderBottom: `1px solid ${THEME.BORDER}`
+              }}
+            >
+              STRUCTURE TOTE
+            </div>
+
+            {/* Hierarchical tree view */}
+            <div style={{ fontSize: '10px', fontFamily: THEME.FONT_MONO, lineHeight: '1.8' }}>
+              {/* Lesson level */}
+              <div style={{ color: THEME.TEXT_PRIMARY }}>
+                <span style={{ color: THEME.AMBER }}>▸</span> {lessonDetails.name}
+              </div>
+
+              {/* Topics */}
+              {lessonDetails.topics.filter(t => t.name).map((topic, ti) => (
+                <div key={topic.id} style={{ marginLeft: '16px' }}>
+                  <div style={{ color: THEME.TEXT_SECONDARY }}>
+                    <span style={{ color: THEME.TEXT_DIM }}>├─</span> {topic.name}
+                    {topic.lo.length > 0 && (
+                      <span style={{ color: THEME.GREEN_LIGHT, marginLeft: '8px', fontSize: '8px' }}>
+                        LO: {topic.lo.join(', ')}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Subtopics under this topic */}
+                  {lessonDetails.subtopics
+                    .filter(st => st.parentTopic === topic.id && st.name)
+                    .map((st, sti) => (
+                      <div key={st.id} style={{ marginLeft: '16px', color: THEME.TEXT_DIM }}>
+                        <span style={{ color: THEME.BORDER_GREY }}>└─</span> {st.name}
+                      </div>
+                    ))
+                  }
+                </div>
+              ))}
+
+              {/* Orphan subtopics (no parent topic assigned) */}
+              {lessonDetails.subtopics
+                .filter(st => st.name && !lessonDetails.topics.some(t => t.id === st.parentTopic && t.name))
+                .map(st => (
+                  <div key={st.id} style={{ marginLeft: '16px', color: THEME.TEXT_DIM }}>
+                    <span style={{ color: THEME.BORDER_GREY }}>├─</span> {st.name}
+                  </div>
+                ))
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -526,7 +627,7 @@ const inputStyle = {
   padding: '10px 12px',
   background: THEME.BG_INPUT,
   border: 'none',
-  borderRadius: '3px',
+  borderRadius: '4px',
   color: THEME.TEXT_PRIMARY,
   fontSize: '11px',
   fontFamily: THEME.FONT_MONO,

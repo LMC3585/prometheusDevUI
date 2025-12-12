@@ -57,7 +57,7 @@ function Scalar({ onNavigate, courseData, courseLoaded }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <h1
             style={{
-              fontSize: '18px',
+              fontSize: '20px',
               letterSpacing: '6px',
               color: THEME.OFF_WHITE,
               fontFamily: THEME.FONT_PRIMARY
@@ -186,8 +186,8 @@ function Scalar({ onNavigate, courseData, courseLoaded }) {
         style={{
           flex: 1,
           padding: '24px 40px',
-          paddingBottom: '180px', // Space for bottom controls
-          overflow: 'hidden'
+          paddingBottom: '120px', // Space for bottom controls
+          overflow: 'auto'
         }}
       >
         {activeTab === 'manager' ? (

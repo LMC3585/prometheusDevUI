@@ -15,7 +15,7 @@
 
 import { useState, useCallback } from 'react'
 import { THEME } from '../constants/theme'
-import logo from '../assets/prometheus-logo.png'
+import logo from '../assets/burntorangelogo.png'
 
 function Login({ onLogin }) {
   const [showFields, setShowFields] = useState(false)
@@ -83,7 +83,7 @@ function Login({ onLogin }) {
       >
         <h1
           style={{
-            fontSize: '24px',
+            fontSize: '26px',
             fontWeight: 300,
             letterSpacing: '8px',
             color: THEME.OFF_WHITE,
@@ -94,12 +94,12 @@ function Login({ onLogin }) {
           PROMETHEUS COURSE GENERATION SYSTEM 2.0
         </h1>
 
-        {/* Horizontal gradient line */}
+        {/* Horizontal gradient line - 2px thick, lighter grey sections */}
         <div
           style={{
             width: '100%',
-            height: '1px',
-            background: `linear-gradient(to right, transparent, ${THEME.AMBER_DARK}, transparent)`,
+            height: '2px',
+            background: `linear-gradient(to right, rgba(150, 150, 150, 0.3), ${THEME.AMBER_DARK}, rgba(150, 150, 150, 0.3))`,
             marginTop: '20px'
           }}
         />
@@ -144,15 +144,15 @@ function Login({ onLogin }) {
           />
         </div>
 
-        {/* Click hint (before fields shown) */}
+        {/* Click hint (before fields shown) - 100% larger, 2 shades lighter */}
         {!showFields && (
           <div
             className="fade-in"
             style={{
               marginTop: '30px',
-              fontSize: '10px',
+              fontSize: '20px',
               letterSpacing: '4px',
-              color: THEME.TEXT_DIM,
+              color: '#b0b0b0',
               fontFamily: THEME.FONT_MONO
             }}
           >
@@ -172,14 +172,14 @@ function Login({ onLogin }) {
               width: '350px'
             }}
           >
-            {/* Username Field */}
+            {/* Username Field - labels 100% larger, 2 shades lighter, pill-shaped input */}
             <div style={{ width: '100%', marginBottom: '24px' }}>
               <label
                 style={{
                   display: 'block',
-                  fontSize: '9px',
+                  fontSize: '18px',
                   letterSpacing: '3px',
-                  color: THEME.TEXT_DIM,
+                  color: '#b0b0b0',
                   fontFamily: THEME.FONT_PRIMARY,
                   marginBottom: '8px'
                 }}
@@ -194,10 +194,10 @@ function Login({ onLogin }) {
                 autoFocus
                 style={{
                   width: '100%',
-                  padding: '14px 16px',
+                  padding: '14px 24px',
                   background: THEME.BG_INPUT,
                   border: `1px solid ${THEME.BORDER}`,
-                  borderRadius: '3px',
+                  borderRadius: '24px',
                   color: THEME.TEXT_PRIMARY,
                   fontSize: '12px',
                   fontFamily: THEME.FONT_MONO,
@@ -217,28 +217,28 @@ function Login({ onLogin }) {
               >
                 <span
                   style={{
-                    fontSize: '8px',
-                    color: THEME.TEXT_DIM,
+                    fontSize: '16px',
+                    color: '#b0b0b0',
                     fontFamily: THEME.FONT_MONO,
                     cursor: 'pointer',
                     transition: 'color 0.2s ease'
                   }}
                   onMouseEnter={(e) => e.target.style.color = THEME.AMBER}
-                  onMouseLeave={(e) => e.target.style.color = THEME.TEXT_DIM}
+                  onMouseLeave={(e) => e.target.style.color = '#b0b0b0'}
                 >
                   Remember Me
                 </span>
               </div>
             </div>
 
-            {/* Password Field */}
+            {/* Password Field - labels 100% larger, 2 shades lighter, pill-shaped input */}
             <div style={{ width: '100%', marginBottom: '30px' }}>
               <label
                 style={{
                   display: 'block',
-                  fontSize: '9px',
+                  fontSize: '18px',
                   letterSpacing: '3px',
-                  color: THEME.TEXT_DIM,
+                  color: '#b0b0b0',
                   fontFamily: THEME.FONT_PRIMARY,
                   marginBottom: '8px'
                 }}
@@ -252,10 +252,10 @@ function Login({ onLogin }) {
                 onKeyDown={handleKeyDown}
                 style={{
                   width: '100%',
-                  padding: '14px 16px',
+                  padding: '14px 24px',
                   background: THEME.BG_INPUT,
                   border: `1px solid ${THEME.BORDER}`,
-                  borderRadius: '3px',
+                  borderRadius: '24px',
                   color: THEME.TEXT_PRIMARY,
                   fontSize: '12px',
                   fontFamily: THEME.FONT_MONO,
@@ -275,14 +275,14 @@ function Login({ onLogin }) {
               >
                 <span
                   style={{
-                    fontSize: '8px',
-                    color: THEME.TEXT_DIM,
+                    fontSize: '16px',
+                    color: '#b0b0b0',
                     fontFamily: THEME.FONT_MONO,
                     cursor: 'pointer',
                     transition: 'color 0.2s ease'
                   }}
                   onMouseEnter={(e) => e.target.style.color = THEME.AMBER}
-                  onMouseLeave={(e) => e.target.style.color = THEME.TEXT_DIM}
+                  onMouseLeave={(e) => e.target.style.color = '#b0b0b0'}
                 >
                   Forgot Password?
                 </span>
@@ -304,17 +304,17 @@ function Login({ onLogin }) {
               </div>
             )}
 
-            {/* Login Button */}
+            {/* Login Button - 100% larger text, pill-shaped */}
             <button
               type="submit"
               style={{
                 width: '100%',
-                padding: '16px',
+                padding: '16px 24px',
                 background: THEME.GRADIENT_BUTTON,
                 border: `1px solid ${THEME.AMBER}`,
-                borderRadius: '3px',
+                borderRadius: '24px',
                 color: THEME.BG_BASE,
-                fontSize: '11px',
+                fontSize: '22px',
                 fontWeight: 600,
                 letterSpacing: '4px',
                 fontFamily: THEME.FONT_PRIMARY,

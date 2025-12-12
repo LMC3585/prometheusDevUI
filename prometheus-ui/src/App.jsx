@@ -16,12 +16,22 @@
  * - Build: Placeholder
  * - Format: Placeholder
  * - Generate: Placeholder
+ *
+ * SCALING:
+ * - Base design: 1920×1080 (fixed inner stage)
+ * - Viewport scaling via single transform on stage container
+ * - Scale = Math.min(viewportW/1920, viewportH/1080)
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 import { THEME } from './constants/theme'
-import { useViewportScale } from './hooks/useViewportScale'
+
+// ============================================
+// SCALE-TO-FIT CONSTANTS
+// ============================================
+const BASE_W = 1920
+const BASE_H = 1080
 
 // Pages
 import Login from './pages/Login'
@@ -35,10 +45,55 @@ import Generate from './pages/Generate'
 
 // Components
 import Header from './components/Header'
+import DebugGrid from './components/DebugGrid'
+
+/**
+ * useScaleToFit - Hook for viewport scaling
+ *
+ * Returns a scale factor to fit 1920×1080 content into current viewport.
+ * Uses debounced resize handling to prevent excessive recalculations.
+ */
+function useScaleToFit() {
+  const [scale, setScale] = useState(1)
+  const debounceRef = useRef(null)
+
+  useEffect(() => {
+    const calculateScale = () => {
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+      const newScale = Math.min(vw / BASE_W, vh / BASE_H)
+      setScale(newScale)
+    }
+
+    const handleResize = () => {
+      // Debounce: clear any pending calculation
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+      }
+      // Schedule new calculation after 100ms of no resize events
+      debounceRef.current = setTimeout(calculateScale, 100)
+    }
+
+    // Calculate initial scale
+    calculateScale()
+
+    // Listen for resize events
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+      }
+    }
+  }, [])
+
+  return scale
+}
 
 function App() {
-  // Viewport scaling for cross-device compatibility
-  const viewportScale = useViewportScale()
+  // Scale-to-fit hook (SINGLE source of viewport scaling)
+  const scale = useScaleToFit()
 
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -47,6 +102,9 @@ function App() {
   // Navigation state
   const [currentPage, setCurrentPage] = useState('navigate')
   const [designSubpage, setDesignSubpage] = useState('planner') // 'planner' | 'scalar'
+
+  // Debug grid state (Ctrl+G toggle)
+  const [showDebugGrid, setShowDebugGrid] = useState(false)
 
   // Course data state
   const [courseData, setCourseData] = useState({
@@ -109,6 +167,11 @@ function App() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Ctrl+G: Toggle debug grid
+      if (e.ctrlKey && e.code === 'KeyG') {
+        e.preventDefault()
+        setShowDebugGrid(prev => !prev)
+      }
       // Ctrl+Space: Toggle to Navigate page
       if (e.ctrlKey && e.code === 'Space' && isAuthenticated) {
         e.preventDefault()
@@ -133,23 +196,26 @@ function App() {
           height: '100vh',
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           overflow: 'hidden',
           backgroundColor: THEME.BG_BASE
         }}
       >
+        {/* ScaleToFit Stage Container - SINGLE transform applied here */}
         <div
           style={{
-            width: '1920px',
-            height: '1080px',
-            transform: `scale(${viewportScale})`,
-            transformOrigin: 'top center',
+            width: `${BASE_W}px`,
+            height: `${BASE_H}px`,
             flexShrink: 0,
-            background: THEME.BG_BASE
+            background: THEME.BG_BASE,
+            position: 'relative',
+            transform: `scale(${scale})`,
+            transformOrigin: 'center center'
           }}
         >
           <Login onLogin={handleLogin} />
         </div>
+        <DebugGrid isVisible={showDebugGrid} scale={scale} />
       </div>
     )
   }
@@ -163,19 +229,21 @@ function App() {
           height: '100vh',
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           overflow: 'hidden',
           backgroundColor: THEME.BG_BASE
         }}
       >
+        {/* ScaleToFit Stage Container - SINGLE transform applied here */}
         <div
           style={{
-            width: '1920px',
-            height: '1080px',
-            transform: `scale(${viewportScale})`,
-            transformOrigin: 'top center',
+            width: `${BASE_W}px`,
+            height: `${BASE_H}px`,
             flexShrink: 0,
-            background: THEME.BG_BASE
+            background: THEME.BG_BASE,
+            position: 'relative',
+            transform: `scale(${scale})`,
+            transformOrigin: 'center center'
           }}
         >
           <Navigate
@@ -183,6 +251,7 @@ function App() {
             courseData={courseData}
           />
         </div>
+        <DebugGrid isVisible={showDebugGrid} scale={scale} />
       </div>
     )
   }
@@ -256,37 +325,40 @@ function App() {
         height: '100vh',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         overflow: 'hidden',
         backgroundColor: THEME.BG_BASE
       }}
     >
+      {/* ScaleToFit Stage Container - SINGLE transform applied here */}
       <div
         style={{
-          width: '1920px',
-          height: '1080px',
-          transform: `scale(${viewportScale})`,
-          transformOrigin: 'top center',
+          width: `${BASE_W}px`,
+          height: `${BASE_H}px`,
           flexShrink: 0,
           background: THEME.BG_DARK,
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          position: 'relative',
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center'
         }}
       >
         {/* Header */}
-        <Header courseLoaded={courseLoaded} courseData={courseData} />
+        <Header courseLoaded={courseLoaded} courseData={courseData} currentPage={currentPage} />
 
         {/* Horizontal gradient line below header */}
         <div
           style={{
             height: '1px',
             width: '100%',
-            background: THEME.GRADIENT_LINE_TOP
+            background: THEME.GRADIENT_LINE_TOP,
+            flexShrink: 0
           }}
         />
 
         {/* Page Content */}
-        <div style={{ flex: 1, overflow: 'hidden' }}>
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           {renderPage()}
         </div>
 
@@ -295,48 +367,55 @@ function App() {
           <div
             style={{
               position: 'absolute',
-              top: '120px',
+              top: '100px',
               right: '40px',
               display: 'flex',
-              gap: '8px',
+              gap: '12px',
               zIndex: 100
             }}
           >
             <button
               onClick={() => handleDesignSubnav('planner')}
               style={{
-                padding: '8px 16px',
-                fontSize: '9px',
-                letterSpacing: '1px',
+                padding: '12px 24px',
+                fontSize: '11px',
+                letterSpacing: '2px',
                 fontFamily: THEME.FONT_PRIMARY,
-                background: designSubpage === 'planner' ? 'rgba(212, 115, 12, 0.2)' : 'transparent',
-                border: `1px solid ${designSubpage === 'planner' ? THEME.AMBER : THEME.BORDER}`,
-                borderRadius: '3px',
-                color: designSubpage === 'planner' ? THEME.AMBER : THEME.TEXT_DIM,
-                cursor: 'pointer'
+                background: designSubpage === 'planner' ? 'rgba(212, 115, 12, 0.3)' : 'transparent',
+                border: `1px solid ${designSubpage === 'planner' ? THEME.AMBER : THEME.BORDER_GREY}`,
+                borderRadius: '4px',
+                color: designSubpage === 'planner' ? THEME.AMBER : THEME.TEXT_SECONDARY,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
               }}
+              onMouseEnter={(e) => { if (designSubpage !== 'planner') e.target.style.color = THEME.AMBER }}
+              onMouseLeave={(e) => { if (designSubpage !== 'planner') e.target.style.color = THEME.TEXT_SECONDARY }}
             >
               PLANNER
             </button>
             <button
               onClick={() => handleDesignSubnav('scalar')}
               style={{
-                padding: '8px 16px',
-                fontSize: '9px',
-                letterSpacing: '1px',
+                padding: '12px 24px',
+                fontSize: '11px',
+                letterSpacing: '2px',
                 fontFamily: THEME.FONT_PRIMARY,
-                background: designSubpage === 'scalar' ? 'rgba(212, 115, 12, 0.2)' : 'transparent',
-                border: `1px solid ${designSubpage === 'scalar' ? THEME.AMBER : THEME.BORDER}`,
-                borderRadius: '3px',
-                color: designSubpage === 'scalar' ? THEME.AMBER : THEME.TEXT_DIM,
-                cursor: 'pointer'
+                background: designSubpage === 'scalar' ? 'rgba(212, 115, 12, 0.3)' : 'transparent',
+                border: `1px solid ${designSubpage === 'scalar' ? THEME.AMBER : THEME.BORDER_GREY}`,
+                borderRadius: '4px',
+                color: designSubpage === 'scalar' ? THEME.AMBER : THEME.TEXT_SECONDARY,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
               }}
+              onMouseEnter={(e) => { if (designSubpage !== 'scalar') e.target.style.color = THEME.AMBER }}
+              onMouseLeave={(e) => { if (designSubpage !== 'scalar') e.target.style.color = THEME.TEXT_SECONDARY }}
             >
               SCALAR
             </button>
           </div>
         )}
       </div>
+      <DebugGrid isVisible={showDebugGrid} scale={scale} />
     </div>
   )
 }

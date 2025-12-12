@@ -15,7 +15,7 @@
 
 import { useState, useCallback } from 'react'
 import { THEME, NAV_SECTIONS, ANIMATION } from '../constants/theme'
-import logo from '../assets/prometheus-logo.png'
+import logo from '../assets/burntorangelogo.png'
 
 function NavWheel({
   currentSection = 'define',

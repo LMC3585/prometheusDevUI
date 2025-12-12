@@ -42,7 +42,7 @@ function Build({ onNavigate, courseLoaded }) {
       >
         <h1
           style={{
-            fontSize: '18px',
+            fontSize: '20px',
             letterSpacing: '6px',
             color: THEME.OFF_WHITE,
             fontFamily: THEME.FONT_PRIMARY
@@ -59,8 +59,7 @@ function Build({ onNavigate, courseLoaded }) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          paddingBottom: '180px'
+          justifyContent: 'center'
         }}
       >
         <div
