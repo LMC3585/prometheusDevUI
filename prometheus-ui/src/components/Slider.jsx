@@ -123,10 +123,10 @@ function Slider({
       {label && (
         <span
           style={{
-            fontSize: '11px',
+            fontSize: '17px',
             fontFamily: THEME.FONT_PRIMARY,
             color: isActive ? THEME.AMBER : THEME.TEXT_SECONDARY,
-            letterSpacing: '1px',
+            letterSpacing: '1.5px',
             transition: 'color 0.3s ease'
           }}
         >
