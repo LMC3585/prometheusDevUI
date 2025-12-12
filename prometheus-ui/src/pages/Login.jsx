@@ -309,7 +309,7 @@ function Login({ onLogin }) {
               type="submit"
               style={{
                 width: '100%',
-                padding: '16px',
+                padding: '14px 16px',
                 background: THEME.GRADIENT_BUTTON,
                 border: `1px solid ${THEME.AMBER}`,
                 borderRadius: '3px',

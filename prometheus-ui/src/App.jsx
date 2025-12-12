@@ -39,6 +39,7 @@ import Header from './components/Header'
 function App() {
   // Viewport scaling for cross-device compatibility
   const viewportScale = useViewportScale()
+  const isScaledDown = viewportScale < 1
 
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -140,9 +141,9 @@ function App() {
       >
         <div
           style={{
-            width: '1920px',
-            height: '1080px',
-            transform: `scale(${viewportScale})`,
+            width: isScaledDown ? '1920px' : '100vw',
+            height: isScaledDown ? '1080px' : '100vh',
+            transform: isScaledDown ? `scale(${viewportScale})` : 'none',
             transformOrigin: 'top center',
             flexShrink: 0,
             background: THEME.BG_BASE
@@ -170,9 +171,9 @@ function App() {
       >
         <div
           style={{
-            width: '1920px',
-            height: '1080px',
-            transform: `scale(${viewportScale})`,
+            width: isScaledDown ? '1920px' : '100vw',
+            height: isScaledDown ? '1080px' : '100vh',
+            transform: isScaledDown ? `scale(${viewportScale})` : 'none',
             transformOrigin: 'top center',
             flexShrink: 0,
             background: THEME.BG_BASE
@@ -263,9 +264,9 @@ function App() {
     >
       <div
         style={{
-          width: '1920px',
-          height: '1080px',
-          transform: `scale(${viewportScale})`,
+          width: isScaledDown ? '1920px' : '100vw',
+          height: isScaledDown ? '1080px' : '100vh',
+          transform: isScaledDown ? `scale(${viewportScale})` : 'none',
           transformOrigin: 'top center',
           flexShrink: 0,
           background: THEME.BG_DARK,

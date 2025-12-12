@@ -41,45 +41,83 @@ function Navigate({ onNavigate, courseData = {} }) {
         position: 'relative'
       }}
     >
-      {/* Header */}
+      {/* Main title on centreline */}
+      <div style={{ padding: '18px 24px 6px', textAlign: 'center' }}>
+        <h1
+          style={{
+            fontSize: '24px',
+            fontWeight: 300,
+            letterSpacing: '8px',
+            color: THEME.OFF_WHITE,
+            fontFamily: THEME.FONT_PRIMARY,
+            margin: 0
+          }}
+        >
+          PROMETHEUS COURSE GENERATION SYSTEM 2.0
+        </h1>
+      </div>
+
+      <div
+        style={{
+          width: '100%',
+          height: '1px',
+          background: THEME.GRADIENT_LINE_TOP
+        }}
+      />
+
+      {/* Section label on centreline */}
+      <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '6px' }}>
+        <span
+          style={{
+            fontSize: '17px',
+            letterSpacing: '6px',
+            color: THEME.WHITE,
+            fontFamily: THEME.FONT_MONO
+          }}
+        >
+          NAVIGATE
+        </span>
+      </div>
+
+      {/* Header content row */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '20px 40px',
-          borderBottom: `1px solid ${THEME.BORDER}`
+          padding: '10px 40px 0'
         }}
       >
         {/* Left - Logo and Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <img
             src={logo}
             alt="Prometheus"
             style={{
-              width: '60px',
-              height: '60px',
+              width: '84px',
+              height: '84px',
               objectFit: 'contain'
             }}
           />
           <div>
             <h1
               style={{
-                fontSize: '16px',
+                fontSize: '24px',
                 fontWeight: 400,
-                letterSpacing: '6px',
+                letterSpacing: '9px',
                 color: THEME.OFF_WHITE,
                 fontFamily: THEME.FONT_PRIMARY,
-                marginBottom: '2px'
+                marginBottom: '4px',
+                marginTop: 0
               }}
             >
               PROMETHEUS
             </h1>
             <div
               style={{
-                fontSize: '9px',
-                letterSpacing: '3px',
-                color: THEME.TEXT_DIM,
+                fontSize: '14px',
+                letterSpacing: '4.5px',
+                color: THEME.TEXT_SECONDARY,
                 fontFamily: THEME.FONT_PRIMARY
               }}
             >
@@ -88,71 +126,42 @@ function Navigate({ onNavigate, courseData = {} }) {
           </div>
         </div>
 
-        {/* Center - Current Section Label */}
-        <div
-          style={{
-            padding: '10px 24px',
-            background: 'rgba(212, 115, 12, 0.08)',
-            border: `1px solid ${THEME.BORDER_AMBER}`,
-            borderRadius: '3px'
-          }}
-        >
-          <span
-            style={{
-              fontSize: '11px',
-              letterSpacing: '4px',
-              color: THEME.AMBER,
-              fontFamily: THEME.FONT_MONO
-            }}
-          >
-            NAVIGATE
-          </span>
-        </div>
-
         {/* Right - Course Info */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'auto auto',
-            gap: '4px 16px',
-            fontSize: '10px'
+            gap: '6px 18px',
+            fontSize: '15px',
+            alignItems: 'center'
           }}
         >
-          <span style={{ color: THEME.TEXT_DIM, fontFamily: THEME.FONT_MONO, letterSpacing: '1px' }}>
+          <span style={{ color: THEME.WHITE, fontFamily: THEME.FONT_MONO, letterSpacing: '1.5px' }}>
             COURSE
           </span>
-          <span style={{ color: course.name !== '---' ? THEME.GREEN_LIGHT : THEME.TEXT_MUTED, fontFamily: THEME.FONT_MONO }}>
+          <span style={{ color: THEME.GREEN_BRIGHT, fontFamily: THEME.FONT_MONO }}>
             {course.name}
           </span>
-          <span style={{ color: THEME.TEXT_DIM, fontFamily: THEME.FONT_MONO, letterSpacing: '1px' }}>
+          <span style={{ color: THEME.WHITE, fontFamily: THEME.FONT_MONO, letterSpacing: '1.5px' }}>
             DURATION
           </span>
-          <span style={{ color: course.duration !== '---' ? THEME.GREEN_LIGHT : THEME.TEXT_MUTED, fontFamily: THEME.FONT_MONO }}>
+          <span style={{ color: THEME.GREEN_BRIGHT, fontFamily: THEME.FONT_MONO }}>
             {course.duration}
           </span>
-          <span style={{ color: THEME.TEXT_DIM, fontFamily: THEME.FONT_MONO, letterSpacing: '1px' }}>
+          <span style={{ color: THEME.WHITE, fontFamily: THEME.FONT_MONO, letterSpacing: '1.5px' }}>
             LEVEL
           </span>
-          <span style={{ color: course.level !== '---' ? THEME.GREEN_LIGHT : THEME.TEXT_MUTED, fontFamily: THEME.FONT_MONO }}>
+          <span style={{ color: THEME.GREEN_BRIGHT, fontFamily: THEME.FONT_MONO }}>
             {course.level}
           </span>
-          <span style={{ color: THEME.TEXT_DIM, fontFamily: THEME.FONT_MONO, letterSpacing: '1px' }}>
+          <span style={{ color: THEME.WHITE, fontFamily: THEME.FONT_MONO, letterSpacing: '1.5px' }}>
             THEMATIC
           </span>
-          <span style={{ color: course.thematic !== '---' ? THEME.GREEN_LIGHT : THEME.TEXT_MUTED, fontFamily: THEME.FONT_MONO }}>
+          <span style={{ color: THEME.GREEN_BRIGHT, fontFamily: THEME.FONT_MONO }}>
             {course.thematic}
           </span>
         </div>
       </div>
-
-      {/* Horizontal gradient line */}
-      <div
-        style={{
-          width: '100%',
-          height: '1px',
-          background: THEME.GRADIENT_LINE_TOP
-        }}
-      />
 
       {/* Main Content - NavWheel Centered */}
       <div
@@ -195,7 +204,7 @@ function Navigate({ onNavigate, courseData = {} }) {
               background: 'transparent',
               border: 'none',
               color: THEME.TEXT_DIM,
-              fontSize: '20px',
+              fontSize: '30px',
               cursor: 'pointer',
               padding: '8px 12px',
               transition: 'color 0.2s ease'
@@ -207,7 +216,7 @@ function Navigate({ onNavigate, courseData = {} }) {
           </button>
           <span
             style={{
-              fontSize: '14px',
+              fontSize: '21px',
               color: THEME.TEXT_DIM,
               fontFamily: THEME.FONT_MONO
             }}
@@ -219,7 +228,7 @@ function Navigate({ onNavigate, courseData = {} }) {
               background: 'transparent',
               border: 'none',
               color: THEME.TEXT_DIM,
-              fontSize: '20px',
+              fontSize: '30px',
               cursor: 'pointer',
               padding: '8px 12px',
               transition: 'color 0.2s ease'
@@ -237,7 +246,8 @@ function Navigate({ onNavigate, courseData = {} }) {
         style={{
           width: '100%',
           height: '1px',
-          background: THEME.GRADIENT_LINE_BOTTOM
+          background: THEME.GRADIENT_LINE_BOTTOM,
+          marginBottom: '25px'
         }}
       />
 
@@ -248,21 +258,21 @@ function Navigate({ onNavigate, courseData = {} }) {
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '12px 40px',
-          fontSize: '9px'
+          fontSize: '14px'
         }}
       >
         <div style={{ display: 'flex', gap: '30px' }}>
           <span style={{ fontFamily: THEME.FONT_MONO }}>
-            <span style={{ color: THEME.TEXT_DIM, letterSpacing: '2px' }}>OWNER</span>
+            <span style={{ color: THEME.WHITE, letterSpacing: '3px' }}>OWNER</span>
             <span style={{ color: THEME.GREEN_BRIGHT, marginLeft: '10px' }}>MATTHEW DODDS</span>
           </span>
           <span style={{ fontFamily: THEME.FONT_MONO }}>
-            <span style={{ color: THEME.TEXT_DIM, letterSpacing: '2px' }}>STATUS</span>
+            <span style={{ color: THEME.WHITE, letterSpacing: '3px' }}>STATUS</span>
             <span style={{ color: THEME.AMBER, marginLeft: '10px' }}>READY</span>
           </span>
         </div>
 
-        <div style={{ fontFamily: THEME.FONT_MONO, color: THEME.TEXT_DIM, letterSpacing: '2px' }}>
+        <div style={{ fontFamily: THEME.FONT_MONO, color: THEME.WHITE, letterSpacing: '3px' }}>
           CLICK SECTION TO NAVIGATE
         </div>
       </div>
@@ -379,7 +389,7 @@ function NavigateWheel({ onNavigate }) {
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill={isHovered ? THEME.WHITE : THEME.AMBER}
-                fontSize="14"
+                fontSize="21"
                 style={{ pointerEvents: 'none' }}
               >
                 {angle === 0 ? '↑' : angle === 90 ? '→' : angle === 180 ? '↓' : '←'}
@@ -405,9 +415,9 @@ function NavigateWheel({ onNavigate }) {
               left: `calc(50% + ${pos.x}px)`,
               top: `calc(50% + ${pos.y}px)`,
               transform: 'translate(-50%, -50%)',
-              fontSize: '14px',
+              fontSize: '21px',
               fontFamily: THEME.FONT_PRIMARY,
-              letterSpacing: '4px',
+              letterSpacing: '6px',
               fontWeight: isHovered ? '600' : '400',
               color: isHovered ? THEME.AMBER : THEME.TEXT_SECONDARY,
               textShadow: isHovered ? `0 0 15px ${THEME.AMBER}` : 'none',
@@ -451,8 +461,8 @@ function NavigateWheel({ onNavigate }) {
       >
         <span
           style={{
-            fontSize: '9px',
-            letterSpacing: '2px',
+            fontSize: '14px',
+            letterSpacing: '3px',
             color: hoveredSection === centerSection.id ? THEME.AMBER : THEME.TEXT_DIM,
             fontFamily: THEME.FONT_PRIMARY,
             transition: 'color 0.3s ease'

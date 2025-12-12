@@ -128,8 +128,8 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
       >
         <h1
           style={{
-            fontSize: '18px',
-            letterSpacing: '6px',
+            fontSize: '27px',
+            letterSpacing: '9px',
             color: THEME.OFF_WHITE,
             fontFamily: THEME.FONT_PRIMARY
           }}
@@ -165,8 +165,8 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h2
             style={{
-              fontSize: '12px',
-              letterSpacing: '3px',
+              fontSize: '18px',
+              letterSpacing: '4.5px',
               color: THEME.AMBER,
               fontFamily: THEME.FONT_PRIMARY,
               borderBottom: `1px solid ${THEME.BORDER}`,
@@ -281,7 +281,7 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
                   textAlign: 'center'
                 }}
               >
-                <span style={{ color: THEME.AMBER, fontFamily: THEME.FONT_MONO, fontSize: '12px' }}>
+                <span style={{ color: THEME.AMBER, fontFamily: THEME.FONT_MONO, fontSize: '18px' }}>
                   {formData.duration}
                 </span>
               </div>
@@ -332,8 +332,8 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h2
             style={{
-              fontSize: '12px',
-              letterSpacing: '3px',
+              fontSize: '18px',
+              letterSpacing: '4.5px',
               color: THEME.AMBER,
               fontFamily: THEME.FONT_PRIMARY,
               borderBottom: `1px solid ${THEME.BORDER}`,
@@ -375,9 +375,9 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
                     key={mode}
                     onClick={() => toggleDelivery(mode)}
                     style={{
-                      padding: '8px 14px',
-                      fontSize: '9px',
-                      letterSpacing: '1px',
+                      padding: '12px 21px',
+                      fontSize: '14px',
+                      letterSpacing: '2px',
                       fontFamily: THEME.FONT_PRIMARY,
                       background: isSelected ? THEME.GRADIENT_BUTTON : 'transparent',
                       border: `1px solid ${isSelected ? THEME.AMBER : THEME.BORDER}`,
@@ -428,7 +428,7 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
                     }}
                   />
                 </button>
-                <span style={{ fontSize: '10px', color: THEME.TEXT_SECONDARY, fontFamily: THEME.FONT_PRIMARY }}>
+                <span style={{ fontSize: '15px', color: THEME.TEXT_SECONDARY, fontFamily: THEME.FONT_PRIMARY }}>
                   {toggle.label}
                 </span>
               </div>
@@ -440,8 +440,8 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h2
             style={{
-              fontSize: '12px',
-              letterSpacing: '3px',
+              fontSize: '18px',
+              letterSpacing: '4.5px',
               color: THEME.AMBER,
               fontFamily: THEME.FONT_PRIMARY,
               borderBottom: `1px solid ${THEME.BORDER}`,
@@ -458,14 +458,14 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
               <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span
                   style={{
-                    width: '24px',
-                    height: '24px',
+                    width: '32px',
+                    height: '32px',
                     borderRadius: '50%',
                     background: THEME.AMBER_DARK,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '11px',
+                    fontSize: '17px',
                     color: THEME.WHITE,
                     fontFamily: THEME.FONT_MONO,
                     flexShrink: 0
@@ -494,11 +494,11 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
           {/* CLO hint */}
           <div
             style={{
-              fontSize: '8px',
+              fontSize: '12px',
               color: THEME.TEXT_DIM,
               fontFamily: THEME.FONT_MONO,
               marginTop: '8px',
-              letterSpacing: '1px'
+              letterSpacing: '1.5px'
             }}
           >
             TIP: Start with a Bloom's verb (EXPLAIN, DESCRIBE, ANALYSE...)
@@ -528,9 +528,9 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
           {/* Analytics Button Placeholder */}
           <button
             style={{
-              padding: '10px 20px',
-              fontSize: '10px',
-              letterSpacing: '2px',
+              padding: '15px 30px',
+              fontSize: '15px',
+              letterSpacing: '3px',
               fontFamily: THEME.FONT_PRIMARY,
               background: 'transparent',
               border: `1px solid ${THEME.BORDER}`,
@@ -546,7 +546,7 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <button style={navButtonStyle}>&lt;</button>
-              <span style={{ color: THEME.TEXT_DIM, fontSize: '12px' }}>+</span>
+              <span style={{ color: THEME.TEXT_DIM, fontSize: '18px' }}>+</span>
               <button style={navButtonStyle}>&gt;</button>
             </div>
             <PKEInterface isActive={isPKEActive} onClose={() => setIsPKEActive(false)} />
@@ -585,34 +585,34 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
 // Style helpers
 const labelStyle = (isActive) => ({
   display: 'block',
-  fontSize: '10px',
-  letterSpacing: '2px',
+  fontSize: '15px',
+  letterSpacing: '3px',
   color: isActive ? THEME.AMBER : THEME.TEXT_DIM,
   fontFamily: THEME.FONT_PRIMARY,
-  marginBottom: '6px',
+  marginBottom: '9px',
   transition: 'color 0.2s ease'
 })
 
 const inputStyle = {
   width: '100%',
-  padding: '10px 12px',
+  padding: '14px 16px',
   background: THEME.BG_INPUT,
   border: 'none',
   borderRadius: '3px',
   color: THEME.TEXT_PRIMARY,
-  fontSize: '12px',
+  fontSize: '18px',
   fontFamily: THEME.FONT_MONO,
   outline: 'none'
 }
 
 const smallButtonStyle = {
-  width: '28px',
-  height: '28px',
+  width: '36px',
+  height: '36px',
   borderRadius: '50%',
   background: THEME.AMBER_DARK,
   border: 'none',
   color: THEME.WHITE,
-  fontSize: '14px',
+  fontSize: '21px',
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
@@ -624,16 +624,16 @@ const navButtonStyle = {
   background: 'transparent',
   border: 'none',
   color: THEME.TEXT_DIM,
-  fontSize: '18px',
+  fontSize: '27px',
   cursor: 'pointer',
-  padding: '4px 8px',
+  padding: '6px 12px',
   transition: 'color 0.2s ease'
 }
 
 const actionButtonStyle = {
-  padding: '10px 24px',
-  fontSize: '10px',
-  letterSpacing: '2px',
+  padding: '14px 36px',
+  fontSize: '15px',
+  letterSpacing: '3px',
   fontFamily: THEME.FONT_PRIMARY,
   background: 'transparent',
   border: `1px solid ${THEME.BORDER}`,
