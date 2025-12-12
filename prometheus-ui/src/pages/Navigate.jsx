@@ -42,10 +42,10 @@ function Navigate({ onNavigate, courseData = {} }) {
       }}
     >
       {/* Main title on centreline */}
-      <div style={{ padding: '24px 10px 8px', textAlign: 'center' }}>
+      <div style={{ padding: '18px 24px 6px', textAlign: 'center' }}>
         <h1
           style={{
-            fontSize: '36px',
+            fontSize: '24px',
             fontWeight: 300,
             letterSpacing: '8px',
             color: THEME.OFF_WHITE,
@@ -66,11 +66,11 @@ function Navigate({ onNavigate, courseData = {} }) {
       />
 
       {/* Section label on centreline */}
-      <div style={{ textAlign: 'center', marginTop: '12px', marginBottom: '8px' }}>
+      <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '6px' }}>
         <span
           style={{
-            fontSize: '26px',
-            letterSpacing: '7px',
+            fontSize: '17px',
+            letterSpacing: '6px',
             color: THEME.WHITE,
             fontFamily: THEME.FONT_MONO
           }}
@@ -85,7 +85,7 @@ function Navigate({ onNavigate, courseData = {} }) {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px 24px 0'
+          padding: '10px 40px 0'
         }}
       >
         {/* Left - Logo and Title */}
@@ -94,15 +94,15 @@ function Navigate({ onNavigate, courseData = {} }) {
             src={logo}
             alt="Prometheus"
             style={{
-              width: '98px',
-              height: '98px',
+              width: '84px',
+              height: '84px',
               objectFit: 'contain'
             }}
           />
           <div>
             <h1
               style={{
-                fontSize: '32px',
+                fontSize: '24px',
                 fontWeight: 400,
                 letterSpacing: '9px',
                 color: THEME.OFF_WHITE,
@@ -115,7 +115,7 @@ function Navigate({ onNavigate, courseData = {} }) {
             </h1>
             <div
               style={{
-                fontSize: '21px',
+                fontSize: '14px',
                 letterSpacing: '4.5px',
                 color: THEME.TEXT_SECONDARY,
                 fontFamily: THEME.FONT_PRIMARY
@@ -132,7 +132,7 @@ function Navigate({ onNavigate, courseData = {} }) {
             display: 'grid',
             gridTemplateColumns: 'auto auto',
             gap: '6px 18px',
-            fontSize: '22px',
+            fontSize: '15px',
             alignItems: 'center'
           }}
         >
@@ -262,17 +262,17 @@ function Navigate({ onNavigate, courseData = {} }) {
         }}
       >
         <div style={{ display: 'flex', gap: '30px' }}>
-            <span style={{ fontFamily: THEME.FONT_MONO, fontSize: '21px', letterSpacing: '2px' }}>
-              <span style={{ color: THEME.WHITE, letterSpacing: '3px' }}>OWNER</span>
-              <span style={{ color: THEME.GREEN_BRIGHT, marginLeft: '10px' }}>MATTHEW DODDS</span>
-            </span>
-          <span style={{ fontFamily: THEME.FONT_MONO, fontSize: '21px', letterSpacing: '2px' }}>
+          <span style={{ fontFamily: THEME.FONT_MONO }}>
+            <span style={{ color: THEME.WHITE, letterSpacing: '3px' }}>OWNER</span>
+            <span style={{ color: THEME.GREEN_BRIGHT, marginLeft: '10px' }}>MATTHEW DODDS</span>
+          </span>
+          <span style={{ fontFamily: THEME.FONT_MONO }}>
             <span style={{ color: THEME.WHITE, letterSpacing: '3px' }}>STATUS</span>
             <span style={{ color: THEME.AMBER, marginLeft: '10px' }}>READY</span>
           </span>
         </div>
 
-        <div style={{ fontFamily: THEME.FONT_MONO, color: THEME.WHITE, letterSpacing: '3px', fontSize: '21px' }}>
+        <div style={{ fontFamily: THEME.FONT_MONO, color: THEME.WHITE, letterSpacing: '3px' }}>
           CLICK SECTION TO NAVIGATE
         </div>
       </div>
