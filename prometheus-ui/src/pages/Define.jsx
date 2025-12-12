@@ -139,26 +139,15 @@ function Define({ onNavigate, courseData, setCourseData, courseLoaded }) {
         position: 'relative'
       }}
     >
-      {/* Page Title */}
+      {/* PKE Button - positioned top right of content area */}
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '12px',
-          padding: '20px 0'
+          position: 'absolute',
+          top: '10px',
+          right: '60px',
+          zIndex: 10
         }}
       >
-        <h1
-          style={{
-            fontSize: '20px',
-            letterSpacing: '6px',
-            color: THEME.OFF_WHITE,
-            fontFamily: THEME.FONT_PRIMARY
-          }}
-        >
-          COURSE INFORMATION
-        </h1>
         <img
           src={pkeButton}
           alt="PKE"

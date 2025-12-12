@@ -2,33 +2,23 @@
  * Navigate Page - Slide 2 of Mockup 2.1
  *
  * Layout:
- * - Full viewport with NavWheel centered
- * - Header bar at top (logo left, "NAVIGATE" label, course info right)
- * - Status bar at bottom
+ * - Shared Header component at top
  * - NavWheel dominates center of screen
+ * - Status bar at bottom
  *
  * The NavWheel here is always in expanded state.
  * Clicking a section navigates to that page.
  */
 
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { THEME } from '../constants/theme'
-import NavWheel from '../components/NavWheel'
-import logo from '../assets/burntorangelogo.png'
+import Header from '../components/Header'
 
 function Navigate({ onNavigate, courseData = {} }) {
   // Handle navigation from wheel
   const handleWheelNavigate = useCallback((sectionId) => {
     onNavigate?.(sectionId)
   }, [onNavigate])
-
-  // Default course data
-  const course = {
-    name: courseData.title || '---',
-    duration: courseData.duration || '---',
-    level: courseData.level || '---',
-    thematic: courseData.thematic || '---'
-  }
 
   return (
     <div
@@ -41,127 +31,8 @@ function Navigate({ onNavigate, courseData = {} }) {
         position: 'relative'
       }}
     >
-      {/* Main title on centreline */}
-      <div style={{ padding: '18px 24px 6px', textAlign: 'center' }}>
-        <h1
-          style={{
-            fontSize: '24px',
-            fontWeight: 300,
-            letterSpacing: '8px',
-            color: THEME.OFF_WHITE,
-            fontFamily: THEME.FONT_PRIMARY,
-            margin: 0
-          }}
-        >
-          PROMETHEUS COURSE GENERATION SYSTEM 2.0
-        </h1>
-      </div>
-
-      <div
-        style={{
-          width: '100%',
-          height: '1px',
-          background: THEME.GRADIENT_LINE_TOP
-        }}
-      />
-
-      {/* Section label on centreline */}
-      <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '6px' }}>
-        <span
-          style={{
-            fontSize: '17px',
-            letterSpacing: '6px',
-            color: THEME.WHITE,
-            fontFamily: THEME.FONT_MONO
-          }}
-        >
-          NAVIGATE
-        </span>
-      </div>
-
-      {/* Header content row */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '10px 40px 0'
-        }}
-      >
-        {/* Left - Logo and Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <img
-            src={logo}
-            alt="Prometheus"
-            style={{
-              width: '84px',
-              height: '84px',
-              objectFit: 'contain'
-            }}
-          />
-          <div>
-            <h1
-              style={{
-                fontSize: '24px',
-                fontWeight: 400,
-                letterSpacing: '9px',
-                color: THEME.OFF_WHITE,
-                fontFamily: THEME.FONT_PRIMARY,
-                marginBottom: '4px',
-                marginTop: 0
-              }}
-            >
-              PROMETHEUS
-            </h1>
-            <div
-              style={{
-                fontSize: '14px',
-                letterSpacing: '4.5px',
-                color: THEME.TEXT_SECONDARY,
-                fontFamily: THEME.FONT_PRIMARY
-              }}
-            >
-              COURSE GENERATION SYSTEM 2.0
-            </div>
-          </div>
-        </div>
-
-        {/* Right - Course Info */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'auto auto',
-            gap: '6px 18px',
-            fontSize: '15px',
-            alignItems: 'center'
-          }}
-        >
-          <span style={{ color: THEME.WHITE, fontFamily: THEME.FONT_MONO, letterSpacing: '1.5px' }}>
-            COURSE
-          </span>
-          <span style={{ color: THEME.GREEN_BRIGHT, fontFamily: THEME.FONT_MONO }}>
-            {course.name}
-          </span>
-          <span style={{ color: THEME.WHITE, fontFamily: THEME.FONT_MONO, letterSpacing: '1.5px' }}>
-            DURATION
-          </span>
-          <span style={{ color: THEME.GREEN_BRIGHT, fontFamily: THEME.FONT_MONO }}>
-            {course.duration}
-          </span>
-          <span style={{ color: THEME.WHITE, fontFamily: THEME.FONT_MONO, letterSpacing: '1.5px' }}>
-            LEVEL
-          </span>
-          <span style={{ color: THEME.GREEN_BRIGHT, fontFamily: THEME.FONT_MONO }}>
-            {course.level}
-          </span>
-          <span style={{ color: THEME.WHITE, fontFamily: THEME.FONT_MONO, letterSpacing: '1.5px' }}>
-            THEMATIC
-          </span>
-          <span style={{ color: THEME.GREEN_BRIGHT, fontFamily: THEME.FONT_MONO }}>
-            {course.thematic}
-          </span>
-        </div>
-      </div>
+      {/* Shared Header Component */}
+      <Header pageTitle="NAVIGATE" courseData={courseData} />
 
       {/* Main Content - NavWheel Centered */}
       <div
@@ -174,7 +45,7 @@ function Navigate({ onNavigate, courseData = {} }) {
           position: 'relative'
         }}
       >
-        {/* NavWheel - Always expanded on this page (+50% larger: 400→600px) */}
+        {/* NavWheel - Always expanded on this page */}
         <div
           className="fade-in-scale"
           style={{
@@ -186,7 +57,6 @@ function Navigate({ onNavigate, courseData = {} }) {
             justifyContent: 'center'
           }}
         >
-          {/* Custom large NavWheel for Navigate page */}
           <NavigateWheel onNavigate={handleWheelNavigate} />
         </div>
 
@@ -300,19 +170,13 @@ function NavigateWheel({ onNavigate }) {
   // Inner dashed circle radius - increased by 40%: 210 → 294
   const innerCircleRadius = 294
 
-  // Fixed label positions per user spec (relative to wheel center at 262.5, 262.5)
-  // Container is 600x600, wheel is 525x525 centered, so wheel top-left is at (37.5, 37.5) in container
-  // User coords are absolute in 1920x1080 viewport where wheel is centered
-  // DEFINE: Y=140 means label center is ~122px above wheel center
-  // BUILD: Y=585 means label center is ~322px below wheel center
-  // DESIGN: X=+220 means label right edge at X offset +220 from center
-  // FORMAT: X=-320 means label LEFT edge at X offset -320 from center
+  // Fixed label positions
   const getLabelPosition = (sectionId) => {
     switch(sectionId) {
-      case 'define': return { x: 0, y: -180 }       // North - moved further up
-      case 'build': return { x: 0, y: 180 }         // South - moved further down
-      case 'design': return { x: 200, y: 0 }        // East - moved further right
-      case 'format': return { x: -200, y: 0 }       // West - moved further left
+      case 'define': return { x: 0, y: -180 }
+      case 'build': return { x: 0, y: 180 }
+      case 'design': return { x: 200, y: 0 }
+      case 'format': return { x: -200, y: 0 }
       default: return { x: 0, y: 0 }
     }
   }
@@ -346,7 +210,7 @@ function NavigateWheel({ onNavigate }) {
           opacity="0.8"
         />
 
-        {/* Inner dashed circle - radius increased by 40% */}
+        {/* Inner dashed circle */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -411,17 +275,16 @@ function NavigateWheel({ onNavigate }) {
         })}
       </svg>
 
-      {/* Section labels - positioned using fixed coordinates to avoid overlap */}
+      {/* Section labels */}
       {sections.map((section) => {
         const pos = getLabelPosition(section.id)
         const isHovered = hoveredSection === section.id
 
-        // FORMAT label needs left-edge alignment, others are center-aligned
         const transformStyle = section.id === 'format'
-          ? 'translate(0, -50%)'  // Left edge aligned
+          ? 'translate(0, -50%)'
           : section.id === 'design'
-            ? 'translate(-100%, -50%)' // Right edge aligned
-            : 'translate(-50%, -50%)' // Center aligned
+            ? 'translate(-100%, -50%)'
+            : 'translate(-50%, -50%)'
 
         return (
           <div
@@ -452,7 +315,7 @@ function NavigateWheel({ onNavigate }) {
         )
       })}
 
-      {/* Center hub - +50% larger: 90→135px */}
+      {/* Center hub */}
       <div
         onClick={() => onNavigate?.(centerSection.id)}
         onMouseEnter={() => setHoveredSection(centerSection.id)}
@@ -493,8 +356,5 @@ function NavigateWheel({ onNavigate }) {
     </div>
   )
 }
-
-// Need to import React for the useState in NavigateWheel
-import React from 'react'
 
 export default Navigate

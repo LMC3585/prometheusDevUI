@@ -344,17 +344,17 @@ function App() {
           transformOrigin: 'center center'
         }}
       >
-        {/* Header */}
-        <Header courseLoaded={courseLoaded} courseData={courseData} currentPage={currentPage} />
-
-        {/* Horizontal gradient line below header */}
-        <div
-          style={{
-            height: '1px',
-            width: '100%',
-            background: THEME.GRADIENT_LINE_TOP,
-            flexShrink: 0
-          }}
+        {/* Header - includes horizontal line and page title */}
+        <Header
+          pageTitle={
+            currentPage === 'define' ? 'COURSE INFORMATION' :
+            currentPage === 'design' ? 'OUTLINE PLANNER' :
+            currentPage === 'build' ? 'BUILD' :
+            currentPage === 'format' ? 'FORMAT' :
+            currentPage === 'generate' ? 'GENERATE' :
+            currentPage.toUpperCase()
+          }
+          courseData={courseData}
         />
 
         {/* Page Content */}
