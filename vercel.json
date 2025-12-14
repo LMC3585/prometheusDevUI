@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd prometheus-ui && npm install && npm run build",
+  "outputDirectory": "prometheus-ui/dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
